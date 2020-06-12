@@ -1,3 +1,9 @@
 title: Technological Blog
 description: Here is my blog website on my technological knowledge
 theme: jekyll-theme-minimal
+
+minima:
+  social_links:
+    twitter: JohnPhm6
+    github: minhrongcon2000
+    linkedin: https://www.linkedin.com/in/phạm-hoàng-minh-5015a215a/
