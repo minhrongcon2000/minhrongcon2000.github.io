@@ -4,10 +4,15 @@ title: About
 permalink: /about/
 ---
 
-Author: Pham Hoang Minh
+This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
 
-IT Student
+You can find the source code for Minima at GitHub:
+[jekyll][jekyll-organization] /
+[minima](https://github.com/jekyll/minima)
 
-International University
+You can find the source code for Jekyll at GitHub:
+[jekyll][jekyll-organization] /
+[jekyll](https://github.com/jekyll/jekyll)
 
-Github page: [minhrongcon2000](https://github.com/minhrongcon2000)
+
+[jekyll-organization]: https://github.com/jekyll
