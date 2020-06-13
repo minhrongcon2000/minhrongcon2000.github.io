@@ -10,8 +10,27 @@
 <!-- Load jQuery -->
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <!-- Load KaTeX -->
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.js"></script>
+<!-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.js"></script> -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    }
+  });
+</script>
+
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 <!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>My First Blog | Wi-tech’s Blog</title>
 <meta name="generator" content="Jekyll v3.8.7" />
@@ -70,6 +89,8 @@
   <div class="post">
     <p>This is just a blog to show Latex integration.</p>
 
+<p>Equation</p>
+
 <script type="math/tex; mode=display">P(x) = \dfrac{1}{\sqrt{2\pi\sigma^2}}\exp\left\{-\dfrac{(x-\mu)}{2\sigma^2}\right\}</script>
 
 <script type="math/tex; mode=display">a+b=c</script>
@@ -78,18 +99,18 @@
 
 <script type="math/tex; mode=display">P(A|B) = \dfrac{P(B|A)P(A)}{P(B)}</script>
 
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+  \dot{x} &= \sigma(y - x) \\
+  \dot{y} &= \rho x - y - xz \\
+  \dot{z} &= -\beta z + xy
+\end{align*} %]]></script>
+
+<p>Inline $E=mc^2$</p>
+
   </div></div>
     </section>
   </main>
 </body>
-<footer><script>
-  $("script[type='math/tex; mode=display']").replaceWith(
-    function(){
-      var tex = $(this).text();
-      return "<div class=\"equation\" align=\"center\">" + 
-      katex.renderToString("\\displaystyle "+tex) + 
-      "</div>";
-  });
-</script></footer>
 
 </html>
