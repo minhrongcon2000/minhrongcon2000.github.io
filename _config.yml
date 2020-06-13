@@ -35,6 +35,8 @@ plainwhite:
 
 # Build settings
 markdown: kramdown
+kramdown: 
+  math_engine: mathjax
 theme: plainwhite
 remote_theme: thelehhman/plainwhite-jekyll
 plugins:

@@ -6,19 +6,24 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/style.css">
-<title>Your awesome title</title>
+<title>Wi-tech's Blog</title>
+<!-- Load jQuery -->
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!-- Load KaTeX -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.js"></script>
 <!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Your awesome title | Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</title>
+<title>Wi-tech’s Blog | A blog post about technical stuff, especially machine learning by an IT student from International University</title>
 <meta name="generator" content="Jekyll v3.8.7" />
-<meta property="og:title" content="Your awesome title" />
+<meta property="og:title" content="Wi-tech’s Blog" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
-<meta property="og:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
+<meta name="description" content="A blog post about technical stuff, especially machine learning by an IT student from International University" />
+<meta property="og:description" content="A blog post about technical stuff, especially machine learning by an IT student from International University" />
 <link rel="canonical" href="http://localhost:4000/" />
 <meta property="og:url" content="http://localhost:4000/" />
-<meta property="og:site_name" content="Your awesome title" />
+<meta property="og:site_name" content="Wi-tech’s Blog" />
 <script type="application/ld+json">
-{"url":"http://localhost:4000/","headline":"Your awesome title","name":"Your awesome title","description":"Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.","@type":"WebSite","@context":"https://schema.org"}</script>
+{"url":"http://localhost:4000/","headline":"Wi-tech’s Blog","name":"Wi-tech’s Blog","description":"A blog post about technical stuff, especially machine learning by an IT student from International University","@type":"WebSite","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 </head>
 
@@ -30,15 +35,15 @@
         <a href="/">Pham Hoang Minh</a>
       </h2>
       <p class="tagline">Student</p>
-      <ul class="social"><a href="https://github.com/minhrongcon2000">
+      <ul class="social"><a href="https://github.com/minhrongcon2000" target="_blank">
           <li>
             <i class="icon-github-circled"></i>
           </li>
-        </a><a href="https://www.linkedin.com/in/phạm-hoàng-minh-5015a215a">
+        </a><a href="https://www.linkedin.com/in/phạm-hoàng-minh-5015a215a" target="_blank">
           <li>
             <i class="icon-linkedin-squared"></i>
           </li>
-        </a><a href="https://twitter.com/JohnPhm6">
+        </a><a href="https://twitter.com/JohnPhm6" target="_blank">
           <li>
             <i class="icon-twitter-squared"></i>
           </li>
@@ -68,7 +73,7 @@
             Jun 13, 2020
           </div><ul class="post-categories"><li>jekyll</li><li>update</li></ul></div>
         <div class="post"></div>
-      </li><li><a class="post-link" href="/2020/06/13/first-blog.html">
+      </li><li><a class="post-link" href="/demo">
           <h2 class="post-title">My First Blog</h2>
         </a>
         <div class="post-meta">
@@ -78,12 +83,17 @@
           </div></div>
         <div class="post"></div>
       </li></ul>
-
-  <!-- <p class="feed-subscribe"><svg class="svg-icon orange">
-		<use xlink:href="/assets/minima-social-icons.svg#rss"></use>
-	</svg><a href="/feed.xml">Subscribe</a></p> -->
     </section>
   </main>
 </body>
+<footer><script>
+  $("script[type='math/tex; mode=display']").replaceWith(
+    function(){
+      var tex = $(this).text();
+      return "<div class=\"equation\" align=\"center\">" + 
+      katex.renderToString("\\displaystyle "+tex) + 
+      "</div>";
+  });
+</script></footer>
 
 </html>
