@@ -1,32 +1,88 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-06-14T00:05:53+07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Wi-tech’s Blog</title><subtitle>A blog post about technical stuff, especially machine learning by an IT student from International University</subtitle><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/jekyll/update/2020/06/13/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2020-06-13T19:41:40+07:00</published><updated>2020-06-13T19:41:40+07:00</updated><id>http://localhost:4000/jekyll/update/2020/06/13/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2020/06/13/welcome-to-jekyll.html">&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-06-15T15:25:20+07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Wi-tech’s Blog</title><subtitle>A blog post about technical stuff, especially machine learning by an IT student from International University</subtitle><entry><title type="html">Embrace the likelihood</title><link href="http://localhost:4000/embrace-the-likelihood" rel="alternate" type="text/html" title="Embrace the likelihood" /><published>2020-06-14T00:00:00+07:00</published><updated>2020-06-14T00:00:00+07:00</updated><id>http://localhost:4000/embrace-the-likelihood</id><content type="html" xml:base="http://localhost:4000/embrace-the-likelihood">&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;The very first machine learning model that one would construct when starting his or her journey in the field of Machine Learning is Linear Regression, an algorithm to find the best linear model to fit a data set. In Machine Learning approach, Linear Regression has five main steps:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize a weight vector&lt;/li&gt;
+  &lt;li&gt;Pass the feature matrix to the model&lt;/li&gt;
+  &lt;li&gt;Calculate the mean-squared-error (MSE) loss function:&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;p&gt;To add new posts, simply add a file in the &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code class=&quot;highlighter-rouge&quot;&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}\label{eq:1}
+	J(w) = \frac{1}{2m}\sum_{i=1}^m (h_w(x) - y)^2 
+\end{align}&lt;/script&gt;
 
-&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Calculate its gradient vector $\vec{\nabla} J$&lt;/li&gt;
+  &lt;li&gt;Update the weight by using gradient descent to minimize the loss function.&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Tom'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints 'Hi, Tom' to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;p&gt;However, the way to derive the loss function is usually ommitted. It turns out to be a very interesting topic that most of the statistical textbook have overlooked: the difference between likelihood and probability.&lt;/p&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;https://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.</summary></entry><entry><title type="html">My First Blog</title><link href="http://localhost:4000/demo" rel="alternate" type="text/html" title="My First Blog" /><published>2020-06-13T00:00:00+07:00</published><updated>2020-06-13T00:00:00+07:00</updated><id>http://localhost:4000/first-blog</id><content type="html" xml:base="http://localhost:4000/demo">&lt;p&gt;This is just a blog to show Latex integration.&lt;/p&gt;
+&lt;h1 id=&quot;probability-vs-likelihood-frequentist-vs-bayesian&quot;&gt;Probability vs Likelihood: Frequentist vs Bayesian&lt;/h1&gt;
+&lt;p&gt;There is an interesting fact that there was a conflict between these two ideologies. Frequentist was popular in the 18th-19th century since mathematics of this time is purely based on theory. Bayesian approach started gaining popularity recently since a lot of applied mathematical model in the modern day requires the incorporation of uncertainty in it.&lt;/p&gt;
 
-&lt;p&gt;Equation&lt;/p&gt;
+&lt;p&gt;Frequentist approach is, in fact, the very first thing that a beginner in Probability and Statistics would tackle. At the high level, Frequentist approach emphasizes on the proportion of occurrence of events without taking any outside effect into account. For example, in Frequentist approach, the chance that a fair coin landing on head is 1/2 since there are two possible outcomes: head and tail, and landing on each one of them is equally likely to take place. At the low level, Frequentist apprach belives that the chance of occurrence of an event is defined as follow.&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(x) = \dfrac{1}{\sqrt{2\pi\sigma^2}}\exp\left\{-\dfrac{(x-\mu)}{2\sigma^2}\right\}&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(A) = \lim_{n\to\infty}\frac{n(A)}{n}&lt;/script&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;a+b=c&lt;/script&gt;
+&lt;p&gt;where $n(A)$ is the number of times the event $A$ happens in the total of $n$ trials.&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;E=mc^2&lt;/script&gt;
+&lt;p&gt;Frequentist calls this chance probability. Frequentist approach has been a fundamental building block for various theory in Statistics, one of which is probability distribution such as the famous Gaussian (or so-called normal) distribution, and the Binomial distribution (which can be considered a discrete version of the former).&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(A|B) = \dfrac{P(B|A)P(A)}{P(B)}&lt;/script&gt;
+&lt;p&gt;The weakness of Frequentist approach is that it does not take external information into account. A coin in Frequentist approach is always a fair coin, which never exists in the real world scenario. Bayesian approach is derived to tackle the issue. Taking the coin tossing problem as an example, in Frequentist approach, its probability of landing on head or tail is assigned to be 1/2. In Bayesian approach, however, the chance that the coin lands on head is $p$, and lands on tail is $1-p$, where $p$ is a random variable. Bayesian approach finds the optimal $q$ based on the data of a certain number of coin tossing. For instance, a coin is tossed 10 times, in which it lands on head 7 times. Frequentist approach would judge that the sample size is not sufficiently large, and would result in doing exhaustive experiments. Bayesian approach assumes that we can only draw that limited amount of sample, and perform inference on $p$.&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-  \dot{x} &amp;= \sigma(y - x) \\
-  \dot{y} &amp;= \rho x - y - xz \\
-  \dot{z} &amp;= -\beta z + xy
-\end{align*} %]]&gt;&lt;/script&gt;
+&lt;p&gt;Let $A$ be the event that a coin lands on head 7 times out of 10 tosses. Since $p$ is a random variable, it follows some kind of probability distribution in Frequentist approach. In Bayesian approach, we define a prior belief (or a prior probability distribution) on $p$, so we assume that $p$ follows a uniform distribution between 0 and 1. Then, by using the Bayes theorem,&lt;/p&gt;
 
-&lt;p&gt;Inline $E=mc^2$&lt;/p&gt;</content><author><name></name></author><summary type="html">This is just a blog to show Latex integration.</summary></entry></feed>
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}\label{eq:2}
+	f(p|A) = \frac{f(A|p)\pi (p)}{\int_0^1 f(A|p)\pi (p)dp}
+\end{align}&lt;/script&gt;
+
+&lt;p&gt;where, in Bayesian terms, $f(p|A)$ is the posterior distribution of $p$ given $A$, $f(A|p)$ is the likelihood that the event $A$ will occur given the probability of landing on head is $p$, $\pi (p)$ is the prior distribution of $p$.&lt;/p&gt;
+
+&lt;p&gt;In Frequentist approach, given that the probability of landing on head is $p$, the chance of $A$ follows a binomial distribution with the proportion of success is $p$; thus, $f(A|p) = \binom{10}{7}p^7(1-p)^3$. Since we assume that $\pi (p)$ is a uniform distribution between 0 and 1, $\pi (p)=1,\text{ }\forall p\in [0,1]$. Since the denominator of (\ref{eq:2}) is always a constant for all p in $[0,1]$, we can rewrite (\ref{eq:2}) as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}
+	f(p|A) = C\times f(A|p)\times\pi (p) = K\times p^7(1-p)^3
+\end{align}&lt;/script&gt;
+
+&lt;p&gt;where $C$ and $K$ are constants.&lt;/p&gt;
+
+&lt;p&gt;Our goal is to find $p$ such that the occurrence of the event is maximize. In other words, given the event $A$ happened, we want to find $p*$ such that $f(p|A)$ reaches its global maxima. Using Calculus approach, the optimal $p$ in this case is $0.7$.&lt;/p&gt;
+
+&lt;p&gt;In comparison to Frequentist approach, Bayesian approach introduces a new concept in conducting inferences: likelihood. Frequentists assume that the chance of an event happening is derived through repeated experiments and call it probability, whereas Bayesians believe that the chance of an event happening is also a random variable following a probability distribution, and finds the optimal chance of occurence through the data drawn from experiment with specifying their prior belief over the occurence chance. Sometimes, prior belief in Bayesian approach does have a major effect in conveying inference on the considered random variable. The methods performed above is called Maximum Likelihood Estimation, and it has been widely used in a lot of statistical textbooks without explaining its origin. It is the basics to derive the mean-squared-error loss function for linear regression.&lt;/p&gt;
+
+&lt;h1 id=&quot;from-maximum-likelihood-estimation-mle-to-linear-regression&quot;&gt;From Maximum Likelihood Estimation (MLE) to Linear Regression&lt;/h1&gt;
+
+&lt;p&gt;We consider a general regression problem as follows: suppose that a vector of random variable $\vec{X}$ and a random variable $Y$ have the relationship of $Y=f(\vec{X})$ where $f$ is a continuous function. To find $f$, we draw a lot of samples of $\vec{X}$ and $Y$ from their distribution, and perform inference on the drawn samples, which is exactly the Bayesian apprach. We denote $\mathcal{D} = \{(\vec{x_i}, y_i) | i=1,2,\ldots,m\}$ as the set of all drawn samples, where $\vec{x_i}\in\mathbb{R}^n$ (n is so-called the number of features), $y_i\in\mathbb{R}^n$, and $y_i = f(x_i) + \epsilon_i$, and $\epsilon_i\sim p(\epsilon)$.&lt;/p&gt;
+
+&lt;p&gt;The common approach to this problem is, first, to assume that $f$ is a member of a family of function $\mathcal{F}$, and second, to find the optimal $f^*\in\mathcal{F}$ that best fits $\mathcal{D}$. In order to define the criteria to evaluate how well the function $f$ fits $\mathcal{D}$, the maximum likelihood estimation (MLE) method is used.&lt;/p&gt;
+
+&lt;p&gt;Our goal is to maximize the likelihood&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}\label{eq:3}
+P(Y|X) = \prod_{i=1}^m p(y_i|\vec{x_i}) = \prod_{i=1}^m p(\epsilon_i)
+\end{align}&lt;/script&gt;
+
+&lt;p&gt;since knowing the appearance of $\vec{x_i}$ will result in the prediction $\hat{y_i} = f(x_i)$, from which $\epsilon_i$ is calculated.&lt;/p&gt;
+
+&lt;p&gt;The mean-squared-error is derived from the assumption that $\epsilon\sim\mathcal{N} (0, \sigma^2)$. With that assumption, by taking natural logarithm both sides (\ref{eq:3}), it can be rewritten as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}\label{eq:4}
+\ln P(Y|X) = C - \sum_{i=1}^m \frac{(y_i - f(\vec{x_i}))^2}{2\sigma^2}
+\end{align}&lt;/script&gt;
+
+&lt;p&gt;where $C$ is a constant.&lt;/p&gt;
+
+&lt;p&gt;By maximizing $(\ref{eq:4})$, the term $J = \displaystyle{\sum_{i=1}^m} (y_i - f(\vec{x_i}))^2$ is also minimized (since $\sigma^2$ is assumed to be a constant), which is the famous mean-squared-error in Linear Regression.&lt;/p&gt;
+
+&lt;p&gt;From here, one may ask whether another loss function is derived by using this approach, by making different assumption on the distribution of $\epsilon$. The answer is yes; in fact, there is a kind of loss function starting to gain popularity in Linear Regression called the mean-absolute error&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+J = \sum_{i=1}^m |y_i - f(\vec{x_i})|
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;by assuming that $\epsilon$ follows Laplace distribution with mean 0. The only constraint in our assumption here is that the mean of the distribution to be assumed must be 0 (if the mean is not zero, we can shift the distribution to the left or the right based on the positivity or negativity of the mean).&lt;/p&gt;
+
+&lt;p&gt;With this approach, the cross-entropy loss function of Logistic Regression can also be derived. The only difference is that Logistic Regression assume its model as $g(\vec{x_i}) = \frac{1}{1+\exp\{-f(\vec{x_i})\}}$, where $f$ is called the boundary decision. The derivation is left for the reader, and the derivation $g$ will be ommitted since it is out of the scope of this blog.&lt;/p&gt;
+
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;The title of this blog is to emphasize to the role of likelihood in the field of Machine Learning, a concept that has been overlooked in a lot of basic statistical material. This blog has clarified the difference between Frequentist and Bayesian approach, and has linked a lot of familiar concept in Statistics to Bayesian one. It also shows an application in one of the most popular, yet fundamental algorithm in the field of Machine Learning, in general, and of Deep Learning, in specific, which provides a building block for the derivation of loss function for new model development.&lt;/p&gt;</content><author><name>Pham Hoang Minh</name></author><summary type="html">Introduction The very first machine learning model that one would construct when starting his or her journey in the field of Machine Learning is Linear Regression, an algorithm to find the best linear model to fit a data set. In Machine Learning approach, Linear Regression has five main steps: Initialize a weight vector Pass the feature matrix to the model Calculate the mean-squared-error (MSE) loss function:</summary></entry></feed>
