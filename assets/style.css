@@ -79,7 +79,7 @@
     background-color: #a2e0fa;
     margin: 2vh 30vw;
     width: 35%;
-    height: 70%;
+    height: 60%;
 }
 
 #date, #aqi {
@@ -173,5 +173,9 @@ rect:hover {
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
+        font-size: 12px;
+    }
+    .solution-wrapper {
+        margin: 1vh auto;
     }
 }

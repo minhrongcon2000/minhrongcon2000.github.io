@@ -78,7 +78,7 @@ d3.csv("./assets/data/national_aqi.csv", rowConverter)
                           left: 130,
                           top: 20,
                           right: 50,
-                          bottom: 50,
+                          bottom: 150,
                       }
                   }
                   let chosen_data = data.filter(item => item["2020 AVG"] !== NaN);
@@ -187,7 +187,7 @@ d3.csv("./assets/data/national_aqi.csv", rowConverter)
                           left: 80,
                           top: 20,
                           right: 50,
-                          bottom: 50,
+                          bottom: 150,
                       }
                   }
                   const asean_countries = ["Brunei", "Cambodia", "East Timor", "Indonesia", "Laos", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand", "Vietnam"];

@@ -95,7 +95,7 @@ new Story({
                 left: 100,
                 top: 10,
                 right: 30,
-                bottom: 50,
+                bottom: 150,
               }
             }
             const g = d3.select("#forest")
@@ -126,7 +126,7 @@ new Story({
                 left: 50,
                 top: 10,
                 right: 20,
-                bottom: 50,
+                bottom: 150,
               }
             }
             const g = d3.select("#co2")
@@ -157,7 +157,7 @@ new Story({
               left: 100,
               top: 10,
               right: 20,
-              bottom: 100,
+              bottom: 200,
             }
           }
           const clean_data = data.filter(item => (item.oil > 0) & (item.gas > 0) & (item.coal > 0));
