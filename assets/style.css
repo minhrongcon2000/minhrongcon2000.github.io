@@ -7,6 +7,10 @@
     color: white;
 }
 
+body {
+    overflow: hidden;
+}
+
 #main-page {
     margin: 0 4vw;
     width: 95vw;
@@ -79,7 +83,7 @@
     background-color: #a2e0fa;
     margin: 2vh 30vw;
     width: 35%;
-    height: 70%;
+    height: 60%;
 }
 
 #date, #aqi {
@@ -139,11 +143,14 @@ rect:hover {
 
 @media only screen and (max-width: 420px) {
     #title {
-        font-size: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
     }
 
     #map {
-        width: 100%;
+        width: 90%;
         margin: 2vh 1vw;
     }
     #forest #x-axis .tick text {
@@ -152,20 +159,21 @@ rect:hover {
 
     .solution-panel {
         display: flex;
-        flex-direction: column;
         border-style: solid;
         border-color: rgba(255, 255, 255, 0.5);
         border-width: 1px;
-        border-radius: 20px;
+        border-radius: 18px;
+        margin: 1vh 5vw;
     }
 
     .solution-panel p {
-        font-size: 18px;
+        font-size: 20px;
+        margin: 1vh auto;
     }
 
     .solution-panel img {
-        width: 70;
-        height: 70;
+        width: 50;
+        height: 50;
     }
 
     #footer {
@@ -173,5 +181,12 @@ rect:hover {
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
+        font-size: 12px;
+    }
+    .solution-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        margin: 1vh auto;
     }
 }
