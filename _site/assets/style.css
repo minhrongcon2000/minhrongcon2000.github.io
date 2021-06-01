@@ -78,6 +78,8 @@
 #map {
     background-color: #a2e0fa;
     margin: 2vh 30vw;
+    width: 35%;
+    height: 70%;
 }
 
 #date, #aqi {
@@ -112,6 +114,8 @@
 }
 
 .solution-panel img {
+    width: 150px;
+    height: 150px;
     margin: auto 5%;
 }
 
@@ -131,4 +135,43 @@
 
 rect:hover {
     opacity: 0.5;
+}
+
+@media only screen and (max-width: 420px) {
+    #title {
+        font-size: 30px;
+    }
+
+    #map {
+        width: 100%;
+        margin: 2vh 1vw;
+    }
+    #forest #x-axis .tick text {
+        transform: "rotate(-65)";
+    }
+
+    .solution-panel {
+        display: flex;
+        flex-direction: column;
+        border-style: solid;
+        border-color: rgba(255, 255, 255, 0.5);
+        border-width: 1px;
+        border-radius: 20px;
+    }
+
+    .solution-panel p {
+        font-size: 18px;
+    }
+
+    .solution-panel img {
+        width: 70;
+        height: 70;
+    }
+
+    #footer {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
 }

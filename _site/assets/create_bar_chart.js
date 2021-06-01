@@ -38,12 +38,14 @@ const construct_bar_selection = (selection, data, year, width, height, margin) =
  
     selection.append("g")
              .attr("id", "y-axis")
-             .call(yAxis);
+             .call(yAxis)
+             .attr("style", "font-size: 12px");
     
     selection.append("g")
              .attr("id", "x-axis")
              .attr("transform", `translate(0, ${innerHeight})`)
-             .call(xAxis);
+             .call(xAxis)
+             .attr("style", "font-size: 12px");
 }
 
 
@@ -65,11 +67,19 @@ d3.csv("./assets/data/national_aqi.csv", rowConverter)
               if(panel === 1) {
                   const width = document.querySelector("#rank-world-graph").getBoundingClientRect().width;
                   const height = document.querySelector("#rank-world-graph").getBoundingClientRect().height;
-                  const margin = {
+                  let margin = {
                       left: 150,
                       top: 10,
                       right: 150,
                       bottom: 30,
+                  }
+                  if(width <= 420) {
+                      margin = {
+                          left: 130,
+                          top: 20,
+                          right: 50,
+                          bottom: 50,
+                      }
                   }
                   let chosen_data = data.filter(item => item["2020 AVG"] !== NaN);
                   chosen_data = chosen_data.sort((item1, item2) => item2["2020 AVG"] - item1["2020 AVG"]);
@@ -166,11 +176,19 @@ d3.csv("./assets/data/national_aqi.csv", rowConverter)
               } else if(panel === 2) {
                   const width = document.querySelector("#rank-asia-graph").getBoundingClientRect().width;
                   const height = document.querySelector("#rank-asia-graph").getBoundingClientRect().height;
-                  const margin = {
+                  let margin = {
                       left: 150,
                       top: 10,
                       right: 150,
                       bottom: 30,
+                  }
+                  if(width <= 420) {
+                      margin = {
+                          left: 80,
+                          top: 20,
+                          right: 50,
+                          bottom: 50,
+                      }
                   }
                   const asean_countries = ["Brunei", "Cambodia", "East Timor", "Indonesia", "Laos", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand", "Vietnam"];
                   chosen_data = data.filter(item => asean_countries.indexOf(item["Country/Region"]) !== -1);
