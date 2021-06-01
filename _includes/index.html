@@ -1,0 +1,147 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vietnam's AQI</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div id="main-page">
+        <div id="title" class="bar-graph-panel">
+            <h1>Vietnam's air condition</h1>
+        </div>
+        <div id="world-rank" class="bar-graph-panel">
+            <br>
+            <br>
+            <h2>How polluted is Vietnam's air in the world?</h2>
+            <br>
+            <p>Vietnam stands at position 21st among the most 100 air-polluted countries in 2020.</p>
+            <br>
+            <div class="year-option-wrapper" id="world">
+                <div class="year-option">2018</div>
+                <div class="year-option">2019</div>
+                <div class="year-option">2020</div>
+            </div>
+            <svg id="rank-world-graph" width="100%" height="70%"></svg>
+        </div>
+        
+        <div id="asean-rank" class="bar-graph-panel">
+            <br>
+            <br>
+            <h2>How polluted is Vietnam's air in ASEAN?</h2>
+            <br>
+            <p>Vietnam stands at position 3rd among ASEAN countries in terms of AQI in 2020.</p>
+            <br>
+            <div class="year-option-wrapper" id="asean">
+                <div class="year-option">2018</div>
+                <div class="year-option">2019</div>
+                <div class="year-option">2020</div>
+            </div>
+            <svg id="rank-asia-graph" width="100%" height="70%"></svg>
+        </div>
+        
+        <div class="map-panel">
+            <br>
+            <br>
+            <h2>AQI of some cities in Vietnam</h2>
+            <br>
+            <p>Most cities in Vietnam belongs to moderate and unhealthy groups.</p>
+            <br>
+            <svg id="map" width="35%" height="70%"></svg>
+        </div>
+        <div class="bar-graph-panel">
+            <br>
+            <br>
+            <h2>Why is it the case?</h2>
+            <br>
+            <p>Is it due to the reduction of forest area? No! The forest area is still increasing.</p>
+            <br>
+            <svg id="forest" width="100%" height="70%"></svg>
+        </div>
+        <div class="bar-graph-panel">
+            <br>
+            <br>
+            <h2>Why is it the case?</h2>
+            <br>
+            <p>However, the amount of carbon dioxide (CO2) is still increasing.</p>
+            <br>
+            <svg id="co2" width="100%" height="70%"></svg>
+        </div>
+        <div class="bar-graph-panel">
+            <br>
+            <br>
+            <h2>Why is it the case?</h2>
+            <br>
+            <p>The only reason is from the human activity. Below is the chart for the amount of CO2 emission from three sources: oil (red), gas (blue), coal (green).</p>
+            <p>Vietnam releases at least 10 million tons of CO2 each year. Not surprisingly, coal emits the most amount of CO2 for it is used to produce electricity and gasoline.</p>
+            <br>
+            <svg id="human" width="100%" height="70%"></svg>
+        </div>
+        <div class="bar-graph-panel">
+            <br>
+            <br>
+            <h2>What are possible solutions?</h2>
+            <br>
+            <p>The only solution is to less depend on fossil fuel products. For individuals, this can be:</p>
+            <div class="solution-wrapper">
+                <div class="solution-panel">
+                    <img src="https://images.vexels.com/media/users/3/128905/isolated/preview/b04ee8fc260d4c6918b67e960ae3b8f5-tour-bus-silhouette-by-vexels.png" alt="" width="200" height="200">
+                    <p>Using public transports.</p>
+                </div>
+                <div class="solution-panel">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Emoji_u2600.svg/1200px-Emoji_u2600.svg.png" alt="" width="150" height="150">
+                    <p>Utilize solar and other renewable energy.</p>
+                </div>
+                <div class="solution-panel">
+                    <img src="https://www.freeiconspng.com/thumbs/fuel-icon/fuel-pump-icon-23.png" alt="" width="150" height="150">
+                    <p>Using environmental-friendly fuels (such as bilogical fuels).</p>
+                </div>
+            </div>
+        </div>
+        <div class="bar-graph-panel">
+            <br>
+            <br>
+            <h2>What are possible solutions?</h2>
+            <br>
+            <p>For government, this can be:</p>
+            <div class="solution-wrapper">
+                <div class="solution-panel">
+                    <img src="https://icons-for-free.com/iconfiles/png/512/svg+lab+microscope+science+icon-1320190754102964758.png" alt="" width="150" height="150">
+                    <p>Research and discover more efficient energy sources.</p>
+                </div>
+                <div class="solution-panel">
+                    <img src="https://images.vexels.com/media/users/3/128905/isolated/preview/b04ee8fc260d4c6918b67e960ae3b8f5-tour-bus-silhouette-by-vexels.png" alt="" width="150" height="150">
+                    <p>Improve transport systems and infrastructures.</p>
+                </div>
+                <div class="solution-panel">
+                    <img src="https://icon-library.com/images/tax-icon-png/tax-icon-png-10.jpg" alt="" width="150" height="150">
+                    <p>Implement environmental taxes.</p>
+                </div>
+            </div>
+            <div id="footer">
+                <p>
+                    This project is a small project conducted by a group of students 
+                    from the International University, so it is not funded by any organizations.
+                </p>
+                <p>
+                    Full source for this project is published 
+                    <a href="https://github.com/minhrongcon2000/vn-aqi-viz" target="_blank">
+                        here
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/d3-path.v2.min.js"></script>
+    <script src="https://d3js.org/d3-shape.v2.min.js"></script>
+    <script src="assets/scrollytell.js"></script>
+    <script src="assets/utils.js"></script>
+    <script src="assets/create_map.js"></script>
+    <script src="assets/create_bar_chart.js"></script>
+    <script src="assets/create_line_chart.js"></script>
+</body>
+</html>
