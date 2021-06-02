@@ -24,7 +24,7 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
 plainwhite:
   name: Pham Hoang Minh 
-  tagline: Student
+  tagline: A person who loves data and AI.
   dateformat: "%b %-d, %Y"
   dark_mode: true
 
