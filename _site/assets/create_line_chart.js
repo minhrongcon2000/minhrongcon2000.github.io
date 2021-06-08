@@ -1,4 +1,4 @@
-const construct_line_selection = (selection, data, x, y, width, height, margin, color, displayXAxis, displayYAxis, xMin, xMax, yMin, yMax, rotate=0) => {
+const construct_line_selection = (selection, data, x, y, width, height, margin, color, displayXAxis, displayYAxis, xMin, xMax, yMin, yMax) => {
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
     let xScale;
@@ -32,6 +32,7 @@ const construct_line_selection = (selection, data, x, y, width, height, margin, 
     const line = d3.line()
                    .x(d => xScale(d[x]))
                    .y(d => yScale(d[y]));
+
     
     selection.select("path").remove();  
     selection.append("path")
@@ -52,7 +53,23 @@ const construct_line_selection = (selection, data, x, y, width, height, margin, 
             .attr(x, d => d[x])
             .attr(y, d => d[y])
             .attr("r", 5)
-            .attr("fill", color);
+            .attr("fill", color)
+            .on('mouseover', function(){
+              d3.select(this)
+                .transition()
+                .duration(150)
+                .attr('r', 10)  
+            })
+            .on('mouseout', function(){
+              d3.select(this)
+                .transition()
+                .duration(150)
+                .attr('r', 5);
+            })
+            .append('title')
+            .text(function(d){
+              return 'Year: ' + d[x] + '\n' + d[y];
+            });
     points.exit().remove();
     
     if(displayXAxis) {
@@ -60,18 +77,15 @@ const construct_line_selection = (selection, data, x, y, width, height, margin, 
       selection.append("g")
                .attr("id", "x-axis")
                .attr("transform", `translate(0, ${innerHeight})`)
-               .call(xAxis)
-               .selectAll("text")
-               .attr("transform", `translate(${rotate ? -10 : 0}, ${rotate ? 20 : 0}) rotate(${rotate})`)
-               .attr("style", "font-size: 12px");
+               .call(xAxis);
     }
 
     if(displayYAxis) {
       selection.select("#y-axis").remove();
+   
       selection.append("g")
                .attr("id", "y-axis")
-               .call(yAxis)
-               .attr("style", "font-size: 12px");
+               .call(yAxis);
     }
 }
 
@@ -84,29 +98,16 @@ new Story({
         .then(data => {
             const width = document.querySelector("#forest").getBoundingClientRect().width;
             const height = document.querySelector("#forest").getBoundingClientRect().height;
-            let margin = {
+            const margin = {
               left: 150,
               top: 10,
               right: 150,
               bottom: 30,
             }
-            if(width < 420) {
-              margin = {
-                left: 100,
-                top: 10,
-                right: 30,
-                bottom: 150,
-              }
-            }
             const g = d3.select("#forest")
                         .append("g")
                         .attr("transform", `translate(${margin.left}, ${margin.top})`);
-            if(width < 420) {
-              construct_line_selection(g, data, "year", "forest_area", width, height, margin, "red", true, true, undefined, undefined, undefined, undefined, -65);
-            } else {
-              construct_line_selection(g, data, "year", "forest_area", width, height, margin, "red", true, true);
-            }
-            
+            construct_line_selection(g, data, "year", "forest_area", width, height, margin, "red", true, true);
         });
     }
 
@@ -115,29 +116,16 @@ new Story({
         .then(data => {
             const width = document.querySelector("#co2").getBoundingClientRect().width;
             const height = document.querySelector("#co2").getBoundingClientRect().height;
-            let margin = {
+            const margin = {
               left: 150,
               top: 10,
               right: 150,
               bottom: 30,
             }
-            if(width < 420) {
-              margin = {
-                left: 50,
-                top: 10,
-                right: 20,
-                bottom: 150,
-              }
-            }
             const g = d3.select("#co2")
                         .append("g")
                         .attr("transform", `translate(${margin.left}, ${margin.top})`);
-            if(width < 420) {
-              construct_line_selection(g, data, "year", "co2", width, height, margin, "red", true, true, undefined, undefined, undefined, undefined, -65);
-            } else {
-              construct_line_selection(g, data, "year", "co2", width, height, margin, "red", true, true);
-            }
-            // construct_line_selection(g, data, "year", "co2", width, height, margin, "red", true, true);
+            construct_line_selection(g, data, "year", "co2", width, height, margin, "red", true, true);
         });
     }
 
@@ -146,19 +134,11 @@ new Story({
         .then(data => {
           const width = document.querySelector("#human").getBoundingClientRect().width;
           const height = document.querySelector("#human").getBoundingClientRect().height;
-          let margin = {
+          const margin = {
             left: 150,
             top: 10,
             right: 150,
             bottom: 30,
-          }
-          if(width < 420) {
-            margin = {
-              left: 100,
-              top: 10,
-              right: 20,
-              bottom: 200,
-            }
           }
           const clean_data = data.filter(item => (item.oil > 0) & (item.gas > 0) & (item.coal > 0));
           const oil_g = d3.select("#human")
@@ -186,16 +166,10 @@ new Story({
       
           const yMax = d3.max([oil_max, gas_max, coal_max]);
           const yMin = d3.min([oil_min, gas_min, coal_min]);
-          
-          if(width < 420) {
-            construct_line_selection(oil_g, oil_data, "year", "oil", width, height, margin, "red", true, true, undefined, undefined, yMin, yMax, -65);
-            construct_line_selection(gas_g, gas_data, "year", "gas", width, height, margin, "blue", true, true, undefined, undefined, yMin, yMax, -65);
-            construct_line_selection(coal_g, coal_data, "year", "coal", width, height, margin, "green", true, true, undefined, undefined, yMin, yMax, -65);
-          } else {
-            construct_line_selection(oil_g, oil_data, "year", "oil", width, height, margin, "red", true, true, undefined, undefined, yMin, yMax);
-            construct_line_selection(gas_g, gas_data, "year", "gas", width, height, margin, "blue", true, true, undefined, undefined, yMin, yMax);
-            construct_line_selection(coal_g, coal_data, "year", "coal", width, height, margin, "green", true, true, undefined, undefined, yMin, yMax);
-          }
+      
+          construct_line_selection(oil_g, oil_data, "year", "oil", width, height, margin, "red", true, true, undefined, undefined, yMin, yMax);
+          construct_line_selection(gas_g, gas_data, "year", "gas", width, height, margin, "blue", true, true, undefined, undefined, yMin, yMax);
+          construct_line_selection(coal_g, coal_data, "year", "coal", width, height, margin, "green", true, true, undefined, undefined, yMin, yMax);
         });
     }
   },
