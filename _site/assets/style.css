@@ -29,7 +29,6 @@ body {
 
 .map-panel {
     height: 100vh;
-    scroll-snap-align: start;
 }
 
 .year-option-wrapper {
@@ -194,5 +193,9 @@ rect:hover {
 
     #main-page {
         scroll-snap-type: y mandatory;
+    }
+
+    .map-panel {
+        scroll-snap-align: start;
     }
 }
