@@ -17,7 +17,6 @@ body {
     height: 100vh;
     overflow-y: scroll;
     position: relative;
-    scroll-snap-type: y mandatory;
 }
 
 #main-page::-webkit-scrollbar {
@@ -26,7 +25,6 @@ body {
 
 .bar-graph-panel {
     height: 100vh;
-    scroll-snap-align: start;
 }
 
 .map-panel {
@@ -188,5 +186,13 @@ rect:hover {
         flex-direction: column;
         justify-content: space-around;
         margin: 1vh auto;
+    }
+
+    .bar-graph-panel {
+        scroll-snap-align: start;
+    }
+
+    #main-page {
+        scroll-snap-type: y mandatory;
     }
 }
