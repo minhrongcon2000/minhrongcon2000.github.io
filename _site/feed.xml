@@ -1,4 +1,531 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-06-08T12:16:38+07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Wi-tech’s Blog</title><subtitle>A blog post about technical stuff, especially machine learning by an IT student from International University</subtitle><entry><title type="html">Vietnam AQI Visualization</title><link href="http://localhost:4000/aqi-viz" rel="alternate" type="text/html" title="Vietnam AQI Visualization" /><published>2021-06-01T00:00:00+07:00</published><updated>2021-06-01T00:00:00+07:00</updated><id>http://localhost:4000/aqi-viz</id><content type="html" xml:base="http://localhost:4000/aqi-viz">&lt;!--&lt;html lang=&quot;en&quot;&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-07-20T14:30:35+07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Wi-tech’s Blog</title><subtitle>A blog post about technical stuff, especially machine learning by an IT student from International University</subtitle><entry><title type="html">Toán học đằng sau thuật toán hồi qui tuyến tính (Linear Regression).</title><link href="http://localhost:4000/linear-regression" rel="alternate" type="text/html" title="Toán học đằng sau thuật toán hồi qui tuyến tính (Linear Regression)." /><published>2021-06-26T00:00:00+07:00</published><updated>2021-06-26T00:00:00+07:00</updated><id>http://localhost:4000/linear-regression</id><content type="html" xml:base="http://localhost:4000/linear-regression">&lt;h2 id=&quot;giới-thiệu&quot;&gt;Giới thiệu&lt;/h2&gt;
+
+&lt;p&gt;Trong thời gian học Đại học của mình, chương trình học có một môn học tên là Regression Analysis. Tên rất kêu nhưng giáo viên dạy môn học này của mình rất qua loa và không chú ý đến chi tiết của các định lí. Vậy nên, lần này, mình sẽ viết góc nhìn xác suất của các thuật toán hồi qui tuyến tính nhằm chỉ ra rằng việc sử dụng các thuật toán tối ưu hoá là chưa đủ để có thể tạo ra các mô hình học máy hoàn chỉnh. Bài viết này mình chia thành 3 phần: Phần 1 là động cơ để mình viết bài blog này, phần 2 mình sẽ giới thiệu sơ về thuật toán hồi qui tuyến tính, phần 3 sẽ là về góc nhìn xác suất của thuật toán và làm sao để sử dụng thuật toán này với hiệu quả cao nhất và phần cuối cùng sẽ là kết luận bao gồm một số nhược điểm của thuật toán này.&lt;/p&gt;
+
+&lt;h2 id=&quot;thuật-toán-hồi-qui-tuyến-tính-linear-regression&quot;&gt;Thuật toán hồi qui tuyến tính (Linear Regression)&lt;/h2&gt;
+
+&lt;p&gt;Có thể nói, thuật toán hồi qui tuyến tính là một trong những thuật toán cơ bản nhất trong tất cả các thuật toán học máy sử dụng tham số có giám sát (là các thuật toán xây dựng mô hình học máy bằng các giả định về mối quan hệ giữa nhãn (label) và các thuộc tính (attributes)). Ngay cả các thuật toán mạng nơ-ron (neural network) cũng được xây dựng từ thuật toán này mà ra. Vậy nên, hiểu được cách vận hành của thuật toán này sẽ giúp bạn cảm thấy dễ hiểu các thuật toán máy học cao hơn.&lt;/p&gt;
+
+&lt;p&gt;Thuật toán hồi qui tuyến tính như tên gọi xây dựng dựa trên giả định rằng nhãn có mối quan hệ tuyến tính với các thuộc tính. Phát biểu một cách toán học thì nếu gọi $y$ là biến cần dự đoán (ví dụ như giá nhà chẳng hạn) và $x_1$, $x_2$, $\ldots$, $x_n$ là các thuộc tính mà có thể biến $y$ sẽ phụ thuộc vào (như giá nhà thì phụ thuộc vào số phòng của ngôi nhà, nhà cao bao nhiêu tầng, diện tích nhà rộng không, nhà có bao nhiêu mặt tiền, vân vân) thì thuật toán hồi qui tuyến tính giả sử rằng tồn tại các tham số $w_0$, $w_1$, $\ldots$, $w_n$ sao cho&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+    \widehat{y} = w_0 + w_1x_1 + w_2x_2 + \ldots + w_nx_n.
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Trong giới khoa học, một bộ $(w_0, w_1, \ldots, w_n)$ được gọi là một bộ trọng số. Mục đích của thuật toán hồi qui tuyến tính là để tìm ra bộ trọng số tối ưu để ước lượng mối quan hệ tuyến tính giữa nhãn và thuộc tính dựa trên một tập dữ liệu có sẵn. Nhưng khi đã dùng đến từ tối ưu thì phải có một “tiêu chí” để đánh giá xem bộ trọng số nào tối ưu hơn bộ trọng số nào. Và “tiêu chí” đó chính là hàm mean-squared error để tính sai số giữa dự đoán của mô hình ($\widehat{y}$) và nhãn ($y$).&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Giả sử ta có một tập dữ liệu $\mathcal{D} = \{(x_{i, 1}, x_{i, 2}, \ldots, x_{i, n}, y_i)|i=\overline{1,m}\}$ với $x_{i, j}$ là giá trị ở thuộc tính $j$ của ví dụ $i$ và $y_i$ chính là nhãn tương ứng. Với mỗi bộ trọng số $(w_1, w_2, \ldots, w_n)\in\mathbb{R}^n$ thì hàm mean-squared error ứng với bộ tham số đó được định nghĩa:&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;J(w_1, w_2, \ldots, w_n) = \dfrac{1}{m}\sum_{i=1}^m\left(y_i - \widehat{y}_i\right)^2&lt;/script&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;với $\widehat{y}_i = w_0 + w_{1,i}+ w_2x_{2, i} + \ldots + w_nx_{n, i} $.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Có thể nhìn thấy mean-squared error có hơi hướng giống với khoảng cách giữa 2 điểm trên hệ toạ độ Decartes n chiều. Như vậy, rõ ràng bộ trọng số càng tối ưu thì mean-squared error ứng với nó càng nhỏ và ngược lại. Bằng việc sử dụng giải tích, ta có thể chứng minh rằng $J$ là một hàm lồi liên tục trên $R^n$, do đó, chúng ta có thể áp dụng thuật toán Gradient Descent để tìm ra nghiệm của bài toán (các bạn có thể xem bài viết về Gradient Descent của mình tại &lt;a href=&quot;./gradient-descent&quot;&gt;đây&lt;/a&gt;). Nếu các bạn có kiến thức về giải tích đa chiều, có thể tìm được vector Jacobi của $J$ là&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\overrightarrow{\nabla} J(\overrightarrow{w})=X^T(X\overrightarrow{w} - \overrightarrow{y})&lt;/script&gt;
+
+&lt;p&gt;với&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+X = \left[
+        \begin{array}{l}
+            1 &amp; x_{1, 1} &amp; x_{1, 2} &amp; \cdots &amp; x_{1, n}\\
+            1 &amp; x_{2, 1} &amp; x_{2, 2} &amp; \cdots &amp; x_{2, n}\\
+            \vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+            1 &amp; x_{m, 1} &amp; x_{m, 2} &amp; \cdots &amp; x_{m, n}
+        \end{array}
+    \right], \overrightarrow{w} = \left[
+        \begin{array}{l}
+            w_1\\
+            w_2\\
+            \vdots\\
+            w_n
+        \end{array}
+    \right], \text { và } \overrightarrow{y} = \left[
+        \begin{array}{l}
+            y_1\\
+            y_2\\
+            \vdots\\
+            y_m
+        \end{array}
+    \right]\tag{1}\label{eq:01} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Như vậy, thuật toán Gradient Descent cho bài toán hồi qui tuyến tính có thể được thiết lập như sau:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Khởi tạo giá trị ban đầu $w_0$ và thiết lập ma trận $X$ và vector $y$ như trên.&lt;/li&gt;
+  &lt;li&gt;Thực hiện một lượng lớn vòng lặp cho đến khi $\overrightarrow{w}_n$ hội tụ. Tại vòng lặp thứ i, thực hiện các bước sau:
+    &lt;ol&gt;
+      &lt;li&gt;Tính vector Jacobi ứng với $\overrightarrow{w}_{i-1}$: $\overrightarrow{\nabla} J(\overrightarrow{w}_{i-1}) = X^T\left(X\overrightarrow{w}_{i-1} - \overrightarrow{y}\right).$&lt;/li&gt;
+      &lt;li&gt;Tính trọng số mới tối ưu hơn trọng số cũ $\overrightarrow{w}_i = \overrightarrow{w}_{i-1} - \alpha * \overrightarrow{\nabla} J(\overrightarrow{w}_{i-1})$ với $\alpha$ là tốc độ học (learning rate).&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Như vậy sau một lượng lớn vòng lặp thì vector $\overrightarrow{w}_n$ sẽ hội tụ đến nghiệm tối ưu.&lt;/p&gt;
+
+&lt;p&gt;Để lấy ví dụ ứng dụng thực tế của thuật toán, giả sử bạn cần ước lượng giá ngôi nhà của bạn với diện tích khoảng 100 mét vuông trên thị trường để bán căn nhà của bạn. Bước đầu tiên của bạn luôn luôn phải là khảo sát thị trường thu thập giá của nhiều ngôi nhà với diện tích khác nhau. Giả sử bước này đã thực hiện xong và bạn có tập dữ liệu như mô tả bên dưới.&lt;/p&gt;
+
+&lt;center&gt;
+    &lt;table&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Diện tích (m2)&lt;/th&gt;
+                &lt;th&gt;Giá (triệu VNĐ)&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+            &lt;tr&gt;
+                &lt;td&gt;1&lt;/td&gt;
+                &lt;td&gt;2.72&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;6&lt;/td&gt;
+                &lt;td&gt;4.47&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;12&lt;/td&gt;
+                &lt;td&gt;7.6&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;17&lt;/td&gt;
+                &lt;td&gt;10.76&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;23&lt;/td&gt;
+                &lt;td&gt;12.92&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;28&lt;/td&gt;
+                &lt;td&gt;19.02&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;34&lt;/td&gt;
+                &lt;td&gt;18.17&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;40&lt;/td&gt;
+                &lt;td&gt;22.5&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;45&lt;/td&gt;
+                &lt;td&gt;21.06&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;50&lt;/td&gt;
+                &lt;td&gt;23.84&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/center&gt;
+
+&lt;p&gt;Khi lấy trục x là diện tích nhà và trục y là giá nhà thì bạn sẽ có hình dưới đây.&lt;/p&gt;
+
+&lt;center&gt;
+    &lt;img src=&quot;./assets/linear_reg.png&quot; width=&quot;50%&quot; /&gt;
+&lt;/center&gt;
+
+&lt;p&gt;Rõ ràng biểu đồ trên cho ta thấy mỗi điểm dữ liệu gần như nằm trên một đường thẳng. Và chúng ta cần phải tìm đường thẳng đó để có thể ước lượng giá nhà của mình. Như vậy đầu tiên bạn phải thiết lập ma trận $X$ và vector $\overrightarrow{y}$.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+X = \left[
+        \begin{array}{l}
+            1 &amp; 1 \\
+            1 &amp; 6 \\
+            1 &amp; 12 \\
+            1 &amp; 17 \\
+            1 &amp; 23 \\
+            1 &amp; 28 \\
+            1 &amp; 34 \\
+            1 &amp; 40 \\
+            1 &amp; 45 \\
+            1 &amp; 50 \\
+        \end{array}
+    \right]\text{ và }
+    \overrightarrow{y}=\left[
+        \begin{array}{l}
+            2.72\\
+            4.47\\
+            7.6\\
+            10.76\\
+            12.92\\
+            19.02\\
+            18.17\\
+            22.5\\
+            21.06\\
+            23.84
+        \end{array}
+    \right] %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Sau khi đã thiết lập $X$ và $\overrightarrow{y}$, bạn chỉ cần khởi tạo $w_0$ có chiều $2\times 1$ và tạo một vòng lặp (tầm 500 vòng) thực hiện các bước như đã đề cập ở trên là sẽ tìm được bộ tham số tối ưu để ước lượng giá nhà của bạn. Dưới đây là một ví dụ của việc sử dụng Python để chạy bài toán trên với 500 vòng lặp.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# mình sử dụng thư viện numpy để hỗ trợ việc tính ma trận
+# các bạn có thể tham khảo nó tại: https://numpy.org
+&lt;/span&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Đầu tiên, mình thiết lập ma trận X và vector y
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;23&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;34&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;45&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;2.72&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;4.47&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;7.6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;10.76&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;12.92&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;19.02&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;18.17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;22.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;21.06&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;23.84&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Sau đó mình khởi tạo vector w. 
+# Ở đây mình cứ chọn đại vector 0 có chiều 2x1
+# Các bạn có thể khởi tạo random
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Cuối cùng mình chạy 1 vòng lặp 500 vòng 
+# và thu được nghiệm của bài toán
+# Các bạn có thể sử dụng các điều kiện dừng khác như
+# nếu bộ tham số ở iteration sau không lớn hơn nhiều so với bộ tham số trước thì dừng
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;learning_rate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0001&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;jacob_vector&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w_0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;w&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;w&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;learning_rate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jacob_vector&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Nếu bạn muốn predict giá nhà thì chạy đoạn code này là có thể tìm được giá nhà của bạn.
+# Thế là bạn có thể bán nhà thành công :D
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X_new&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X_new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Dưới đây là hình minh hoạ cho quá trình huấn luyện của thuật toán hồi qui tuyến tính.&lt;/p&gt;
+
+&lt;center&gt;
+    &lt;img src=&quot;./assets/linear_reg_result.png&quot; width=&quot;50%&quot; /&gt;
+&lt;/center&gt;
+
+&lt;p&gt;Như các bạn thấy, nếu thuật toán của các bạn được thực thi thành công thì khi bạn vẽ đường thẳng dự đoán, khoảng cách giữa mỗi điểm đến đường dự đoán rất nhỏ (hình trên). Hơn nữa, để có thể phát hiện ra sai sót trong quá trình thực thi, các bạn có thể vẽ biểu đồ đường với trục x thể hiện vòng lặp và trục y thể hiện giá trị của hàm mất mát. Nếu tốc độ học được chọn phù hợp và bạn không tính sai đạo hàm, biểu đồ sẽ có dạng giảm dần vào những vòng lặp ban đầu và phẳng dần với những vòng lặp lớn hơn (hình dưới).&lt;/p&gt;
+
+&lt;p&gt;Nếu bạn đọc được đến đây rồi thì chúc mừng! Bạn đã có đủ kiến thức để bước tiếp vào các thuật toán cao hơn rồi. Đó là những gì bạn được nghe khi bạn học được đến đây từ những người dạy ở ngoài. Tuy nhiên, với mình, điều này là chưa đủ để tận dụng hết sức mạnh của thuật toán hồi qui tuyến tính. Làm sao để có thể hiểu hết và tận dụng hết được thuật toán này thì mời các bạn đến phần tiếp theo.&lt;/p&gt;
+
+&lt;h2 id=&quot;góc-nhìn-xác-suất-của-thuật-toán-hồi-qui-tuyến-tính&quot;&gt;Góc nhìn xác suất của thuật toán hồi qui tuyến tính&lt;/h2&gt;
+
+&lt;p&gt;Có thể các bạn không biết (hoặc đã biết) nhưng hầu hết các thuật toán học giám sát có sử dụng tham số đều được xây dựng dựa trên phương pháp maximum likelihood estimation (MLE, tên tiếng Việt là hợp lí cực đại nhưng mà tên này nó sai quá nên thôi mình giữ phiên bản tiếng Anh của nó). Phương pháp này cụ thể đưa ra một ước lượng tốt nhất về một tham số chưa biết bằng việc cực đại hoá phân phối của dữ liệu thu được nếu biết dữ liệu được lấy mẫu từ một phân bố xác suất bị chi phối bởi tham số chưa biết đó (likelihood). Ví dụ, bạn muốn tính chiều cao trung bình của người Việt Nam thì bạn phải lấy trung bình của 96 triệu dân. Thế nhưng bạn không thể đủ sức làm được việc đó (ngay cả việc khảo sát dân số cũng không thể thực hiện trên toàn bộ dân số Việt Nam mà chỉ thực hiện trên một lượng lớn dân số). Như vậy, việc bạn làm là đi hỏi khoảng 50-100 người Việt Nam về chiều cao và tính trung bình rồi cho ra kết quả. Việc tính trung bình đó là kết quả của việc sử dụng phương pháp MLE trên phân phối của dữ liệu bạn thu được biết dữ liệu được lấy mẫu từ một phân phối chuẩn với giá trị trung bình là tham số cần tìm và phương sai được xem là đã biết dựa trên các nghiên cứu thực nghiệm.&lt;/p&gt;
+
+&lt;p&gt;Trong khuôn khổ bài viết này, mình sẽ sử dụng phương pháp này để cho các bạn thấy tại sao phải sử dụng hàm mean-squared error như trên để tìm ra bộ tham số tối ưu và những suy diễn liên quan đến nó (bạn cũng có thể áp dụng phương pháp này để tìm chiều cao trung bình của người Việt Nam). Để sử dụng phương pháp này trước hết chúng ta cần phát biểu lại bài toán hồi qui tuyến tính một chút để các bạn có thể thấy khía cạnh xác suất của nó:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Giả sử ta có $n$ biến ngẫu nhiên tương ứng với $n$ thuộc tính trong dữ liệu $X_1$, $X_2$, $\ldots$, $X_n$ và một biến Y có quan hệ tuyến tính với các thuộc tính hay nói cách khác (đây là giả sử của bài toán hồi qui tuyến tính):&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;Y=\beta_0 + \beta_1X_1 + \beta_2X_2 + \ldots + \beta_nX_n+\epsilon&lt;/script&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Sau đó, chúng ta lấy mẫu ngẫu nhiên dựa trên phân phối của $X_1, X_2, X_3, \ldots, X_n, Y$ và thu được một tập dữ liệu $\mathcal{D} = \{(x_{i,1}, x_{i,2},\ldots, x_{i,n}, y_i)| i=\overline{1,m}\}$ (đây chính là bước thu thập dữ liệu).&lt;/p&gt;
+
+  &lt;p&gt;Như vậy, chúng ta cần phải tìm bộ tham số $(\widehat{\beta}_1, \widehat{\beta}_2, \ldots, \widehat{\beta}_n)$ các bộ tham số này &lt;em&gt;“gần”&lt;/em&gt; với bộ tham số $(\beta_0, \beta_1,\ldots,\beta_n)$ nhất dựa trên tập dữ liệu $\mathcal{D}$.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Để có thể sử dụng phương pháp MLE, chúng ta cần phải tìm phân phối tham số này biết dữ liệu mà chúng ta thu được $\mathcal{D}$. Nói một cách toán học tức là bạn phải tính được hàm phân phối xác suất $p(d_1, d_2,\ldots, d_n | \beta_1, \beta_2, \ldots, \beta_n)$ với $d_i = (x_{i,1}, x_{i,2},\ldots, x_{i,n}, y_i)$. Ở đây, nếu chúng ta giả sử $\epsilon\sim\mathcal{N}(0, \sigma^2)$ thì rõ ràng&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;Y\sim p(y)=\mathcal{N}(\beta_0 + \beta_1X_1 + \beta_2X_2 + \ldots + \beta_nX_n, \sigma^2).&lt;/script&gt;
+
+&lt;p&gt;Như vậy nếu $y_1$, $y_2$, $\ldots$, $y_m$ được lấy mẫu ngẫu nhiên độc lập từ $p(y)$ thì rõ ràng&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+    p(d_1, d_2, \ldots, d_n|\beta_0, \beta_1, \ldots, \beta_n) &amp;= \prod_{i=1}^m p(d_i|\beta_0, \beta_1, \ldots, \beta_n)\\
+    &amp;= \prod_{i=1}^m \dfrac{1}{\sqrt{2\pi\sigma^2}}\exp\left\{-\dfrac{(y_i - \beta_0 - \beta_1x_{i,1} - \beta_2x_{i,2} - \ldots - \beta_nx_{i,n})^2}{2\sigma^2}\right\}\\
+    &amp;\propto\exp\left\{-\dfrac{\sum_{i=1}^n(y_i - \beta_0 - \beta_1x_{i,1} - \beta_2x_{i,2} - \ldots - \beta_nx_{i,n})^2}{2\sigma^2}\right\}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Hàm $p(d_1, d_2, \ldots, d_n|\beta_0, \beta_1, \ldots, \beta_n)$ còn có một tên gọi khác nữa là hàm likelihood. Như vậy, như tên gọi của phương pháp MLE, chúng ta cần phải tìm bộ tham số $(\widehat{\beta}_1, \widehat{\beta}_2, \ldots, \widehat{\beta}_n)$ để hàm likelihood đạt giá trị lớn nhất. Chúng ta có thể tính đạo hàm trực tiếp của hàm likelihood để tìm ra kết quả hoặc lấy log hai vế rồi tìm giá trị cực đại của hàm log (lưu ý lấy log của một hàm số không làm thay đổi tính biến thiên, lồi lõm của hàm số đó).&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+    \log p(d_1, d_2, \ldots, d_n|\beta_0, \beta_1, \ldots, \beta_n) = -\dfrac{1}{2\sigma^2}\sum_{i=1}^n(y_i - \beta_0 - \beta_1x_{i,1} - \beta_2x_{i,2} - \ldots - \beta_nx_{i,n})^2
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Đây rõ ràng tương ứng với việc cực tiểu hoá mean-squared error sử dụng thuật toán Gradient Descent như đã đề cập ở phía trước và cũng là nguồn gốc của việc sử dụng mean-squared error để tìm ra bộ tham số tốt nhất. Hơn nữa, chúng ta còn có thể biết nghiệm tối ưu chuẩn tắc của bài toán trên là $\widehat{\beta} = (X^TX)^{-1}X^Ty$. Tuy nhiên việc sử dụng nghiệm chuẩn tắc để giải bài toán hồi qui tuyến tính không được khuyến khích để sử dụng trong ứng dụng thực tế vì độ phức tạp của việc tính ma trận nghịch đảo không phù hợp để triển khai.&lt;/p&gt;
+
+&lt;p&gt;Chính vì bản chất của hàm mean-squared error là việc sử dụng phương pháp MLE. Cho nên chúng ta cần phải biết được:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Ước lượng về tham số $\beta$ này có unbiased không (nói một cách khác là kì vọng của ước lượng $\widehat{\beta}$ phải đúng bằng với tham số $\beta$ chưa biết)&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Làm sao để tính được khoảng tin cậy (confidence interval) của ước lượng này để có thể đánh giá liệu mô hình này có thể ứng dụng cho thực tế hay không?&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Để trả lời câu hỏi 1, tất nhiên chúng ta phải tính kì vọng của $\widehat{\beta}$.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbb{E}[\widehat{\beta}] = \mathbb{E}[(X^TX)^{-1}X^Ty] = (X^TX)^{-1}X^T\mathbb{E}[y] = (X^TX)^{-1}X^TX\beta = \beta\tag{2}\label{eq:02}&lt;/script&gt;
+
+&lt;p&gt;Như vậy có thể thấy được $\widehat{\beta}$ là một ước lượng unbiased. Câu hỏi thứ hai được trả lời từ hai quan sát sau (mình sẽ chứng minh nó trong phần &lt;a href=&quot;#phụ-lục&quot;&gt;Phụ lục&lt;/a&gt;).&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;span id=&quot;first-obs&quot;&gt;$\widehat{\beta}\sim\mathcal{N}\left(\beta, \sigma^2(X^TX)^{-1}\right)$&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;span id=&quot;second-obs&quot;&gt;Đặt $S = \lVert y - X\widehat{\beta}\rVert_2^2$. Như vậy thì $\dfrac{S}{\sigma^2}\sim\chi_{m-n-1}^2$.&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Như vậy, rõ ràng nếu đặt A = $(X^TX)^{-1}$ thì $\widehat{\beta}_i\sim\mathcal{N}(\beta_i, \sigma^2\times A_{ii})$, do đó&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\dfrac{\widehat{\beta_i} - \beta_i}{\sqrt{\dfrac{A_{ii}\times S}{m-n-1}}}\sim T_{m-n-1}&lt;/script&gt;
+
+&lt;p&gt;Như vậy, với mức độ tin cậy $1-\alpha$, khoảng tin cậy của $\widehat{\beta_i}$ sẽ là&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\left[\widehat{\beta}_i-t_{\alpha/2, m-n-1}\sqrt{\dfrac{A_{ii}\times S}{m-n-1}}, \widehat{\beta}_i+t_{\alpha/2, m-n-1}\sqrt{\dfrac{A_{ii}\times S}{m-n-1}}\right]&lt;/script&gt;
+
+&lt;p&gt;Ngoài ra, nếu bạn áp dụng khoảng tin cậy lên $\widehat{y} = X\widehat{\beta}$, bạn cũng có thể tìm ra được khoảng tin cậy của nó và thu được hình bên dưới về kết quả của thuật toán với ví dụ bên trên với khoảng tin cậy $95\%$.&lt;/p&gt;
+
+&lt;center&gt;
+    &lt;img src=&quot;./assets/prediction_ci.png&quot; width=&quot;50%&quot; /&gt;
+&lt;/center&gt;
+
+&lt;p&gt;Đây chính là góc nhìn đầy đủ và toàn diện nhất về bài toán hồi qui tuyến tính. Việc sử dụng phân phối mẫu của ước lượng tham số sẽ giúp bạn quyết định xem mô hình tuyến tính bạn xây dựng được có đáng tin cậy hay không. Nếu mô hình ước lượng được các tham số $\widehat{\beta}_i$ nhưng lại có khoảng tin cậy rất lớn thì có khả năng mô hình của bạn đã không mô hình hoá tốt mối quan hệ giữa nhãn và thuộc tính, ngược lại, nếu khoảng tin cậy nhỏ thì mô hình xây dựng được là đáng tin cậy và có thể sử dụng vào các ứng dụng thực tế.&lt;/p&gt;
+
+&lt;p&gt;Hiểu biết được khía cạnh xác suất của bài toán hồi qui tuyến tính còn cho phép bạn lọc bỏ những thuộc tính không cần thiết. Điều này được thực hiện bằng việc sử dụng kiểm định giả thuyết xác suất (hypothesis testing) với giả thuyết rỗng (null hypothesis) $H_0: \beta_i=0$ và giả thuyết thay thế (alternative hypothesis) $H_a: \beta_i\neq 0$. Như vậy, với hệ số sig (significant level) $\alpha$,&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Nếu $|\widehat{\beta}_i| &amp;gt; t_{\alpha / 2, m-n-1}\sqrt{\dfrac{A_{ii}\times S}{m - n - 1}}$ thì ta bác bỏ giả thuyết rỗng và chấp nhận giả thuyết thay thế. Tức là có một mối liên hệ giữa nhãn và thuộc tính $i$.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Ngược lại, nếu $|\widehat{\beta}_i| \leq t_{\alpha / 2, m-n-1}\sqrt{\dfrac{A_{ii}\times S}{m - n - 1}}$ thì ta chấp nhận giả thuyết rỗng. Tức là không hề có mối liên hệ nào giữa nhãn và thuộc tính i. Và ta có thể bỏ thuộc tính đó đi và xây dựng lại mô hình.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;kết-luận&quot;&gt;Kết luận&lt;/h2&gt;
+
+&lt;p&gt;Việc sử dụng xác suất thống kê lên thuật toán hồi qui tuyến tính giúp cho thuật toán này trở nên cực kì hữu dụng không chỉ trong việc tìm ra mối tương quan giữa các biến với nhau mà còn giúp loại bỏ những biến không quan trọng gây nhiễu cho quá trình huấn luyện. Thuật toán hồi qui tuyến tính đã được sử dụng để làm nền cho rất nhiều thuật toán cao cấp sau này, bao gồm cả các mạng nơ-ron phức tạp. Tuy nhiên, thuật toán hồi qui tuyến tính vẫn còn nhiều hạn chế. Hạn chế đầu tiên là thuật toán hồi qui tuyến tính, đúng như tên gọi của nó, chỉ có thể biểu diễn được các mối quan hệ tuyến tính mà thiếu khả năng biểu diễn các mối quan hệ phi tuyến. Việc này tuy có thể cải thiện bằng việc phức tạp hoá thuộc tính bằng cách thêm các thuộc tính bậc cao nhưng lại dẫn đến tiềm tàng bị overfit trong quá trình huấn luyện. Hạn chế thứ hai là thuật toán hồi qui tuyến tính cực kì nhạy cảm với các điểm dữ liệu ngoại vi (outlier). Lí do là các hạng tử ứng với các điểm dữ liệu ngoại vi trong mean-squared error thường mang các giá trị rất lớn (do bình phương của một số cực lớn sẽ tạo ra một số lớn hơn), do đó việc xử lí dữ liệu là tối quan trọng trước khi áp dụng thuật toán này.&lt;/p&gt;
+
+&lt;h2 id=&quot;phụ-lục&quot;&gt;Phụ lục&lt;/h2&gt;
+
+&lt;p&gt;Ở phần này mình sẽ chứng minh 2 quan sát được đề cập ở phần 3 của bài viết. Quan sát &lt;a href=&quot;#first-obs&quot;&gt;thứ nhất&lt;/a&gt; rất dễ thấy nếu bạn sử dụng các biến đổi đại số tuyến tính với lưu ý nếu ma trận hiệp phương sai của vector biến ngẫu nhiên X là $\Sigma$ thì ma trận hiệp phương sai của $AX$, với $A$ là một ma trận, sẽ là $A\Sigma A^T$). Để chứng minh được quan sát &lt;a href=&quot;#second-obs&quot;&gt;thứ hai&lt;/a&gt; mình cần chứng minh hai bổ đề sau:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bổ đề 1&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Nếu $A$ là một ma trận luỹ đẳng đối xứng với chiều $n\times n$ thì tồn tại một ma trận $U$ có chiều $n\times r$ với $r$ là hạng của ma trận $A$ sao cho $A = UU^T$.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;em&gt;Chứng minh&lt;/em&gt;: Vì $A$ là một ma trận luỹ đẳng nên các trị riêng của ma trận $A$ chỉ có thể là 0 hoặc 1. Mặt khác vì $A$ cũng là ma trận đối xứng nên theo định lí phổ, $A = UDU^T$ với $D$ là một ma trận chéo chứa các trị riêng của ma trận $A$ và ma trận $U$ là ma trận trực giao với các cột là các vector riêng tương ứng với trị riêng. Mặt khác, do $r$ là hạng của ma trận $A$ nên có tất cả $r$ trị riêng bằng 1. Vậy nên nếu bỏ tất cả các trị riêng bằng 0 và các vector riêng tương ứng, ta sẽ thu được ma trận $D$ mới đúng bằng với ma trận đơn vị có chiều là $r\times r$ và ma trận $U$ mới có chiều là $n\times r$ mà vẫn đảm bảo $A = UDU^T = UIU^T = UU^T$. Từ đó, ta có điều phải chứng minh. $\blacksquare$&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bổ đề 2&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Nếu ta có $Z$ là một vector thuộc $\mathbb{R}^n$ gồm các biến ngẫu nhiên độc lập lấy từ phân phối chuẩn chuẩn hoá (hay nói cách khác, $Z\sim\mathcal{N}(0, I)$ với $I$ là ma trận đơn vị có chiều $n\times n$) và $A$ (cũng số chiều $n\times n$) là một ma trận luỹ đẳng đối xứng. Khi đó, $Z^TAZ$ sẽ là biến ngẫu nhiên có phân phối $\chi^2$ với bậc tự do là hạng của ma trận $A$.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;em&gt;Chứng minh&lt;/em&gt;: Sử dụng bổ đề 1, ta thấy tồn tại một ma trận trực giao $U$ có chiều $n\times r$ thoả mãn $A = UU^T$. Do đó, $Z^TAZ = Z^TUU^TZ$. Mặt khác, nếu đặt $Z’=U^TZ$ thì rõ ràng $Z’\sim\mathcal{N}(0, I)$ thuộc $\mathbb{R}^r$ với $r$ là bậc của ma trận $A$. Do đó, $Z^TAZ = Z’^TZ’$ chính là biến ngẫu nhiên $\chi^2$ với bậc tự do là hạng của ma trận $A$. $\blacksquare$&lt;/p&gt;
+
+&lt;p&gt;Quay trở lại bài toán của chúng ta, nếu viết lại $S$ dưới dạng ma trận thì ta sẽ có $S = y^T(I-H)y$ với $I$ là ma trận đơn vị có số chiều là $n$, và $H = X(X^TX)^{-1}X^T$ (X, y được thiết kế tại ($\ref{eq:01}$)). Như vậy $S\sim\sigma^2\chi^2_r$ với $r$ là hạng của ma trận $I - H$. Mặt khác, dễ dàng chứng minh $I - H$ là ma trận luỹ đẳng đối xứng nên ta có&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+    rank(I - H) &amp;= trace(I - H) = trace(I) - trace(H) = n - trace(X(X^TX)^{-1}X^T) \\
+    &amp;= m - trace((X^TX)^{-1}X^TX) = m - n - 1.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Do đó, ta có $\frac{S}{\sigma^2}\sim\chi^2_{m-n-1}$. Từ đó, ta chứng minh được quan sát &lt;a href=&quot;#second-obs&quot;&gt;thứ hai&lt;/a&gt;.&lt;/p&gt;</content><author><name>Pham Hoang Minh</name></author><category term="maths" /><category term="optimization" /><category term="statistics" /><summary type="html">Giới thiệu</summary></entry><entry><title type="html">Toán học đằng sau thuật toán Gradient Descent.</title><link href="http://localhost:4000/gradient-descent" rel="alternate" type="text/html" title="Toán học đằng sau thuật toán Gradient Descent." /><published>2021-06-02T00:00:00+07:00</published><updated>2021-06-02T00:00:00+07:00</updated><id>http://localhost:4000/gradient-descent</id><content type="html" xml:base="http://localhost:4000/gradient-descent">&lt;h2 id=&quot;giới-thiệu&quot;&gt;Giới thiệu&lt;/h2&gt;
+
+&lt;p&gt;Chuyện là bây giờ mình sắp kết thúc năm ba rồi và đang trong quá trình chuẩn bị thực tập. Nhưng mà portfolio của mình yếu quá nên giờ mình sẽ quay trở lại viết blog tiếp. Rất may mắn là mình kiếm được một chủ đề không mấy là mới nhưng lại khá là quan trọng trong quá trình học của mình. Mặc dù trường mình có dạy phương pháp này nhưng giáo viên dạy rất là khô khan và lan man (đây cũng là động lực chính để mình viết blog này). Mình mong bài viết này tuy ngắn nhưng sẽ bao quát hết được ý tưởng đằng sau của thuật toán và các khảo sát lí thuyết của thuật toán về tốc độ hội tụ.&lt;/p&gt;
+
+&lt;p&gt;Thuật toán Gradient Descent lần đầu tiên được tìm ra bởi nhà toán học nổi tiếng Cauchy (cũng là nhân vật ám ảnh với các bạn học sinh cấp 2 với những bài toán bất đẳng thức khó). Sau đó phương pháp này được nghiên cứu bởi Haskell Cury (cha đẻ của ngôn ngữ lập trình Haskell, đi đầu về phong cách lập trình hướng hàm (functional programming)) và từ đó, Gradient Descent khá nổi tiếng trong giới khoa học dưới cái tên steepest descent.&lt;/p&gt;
+
+&lt;p&gt;Bài blog này sẽ được chia làm ba phần với mức độ khó tăng dần: phần đầu mình sẽ giới thiệu về ý tưởng đằng sau thuật toán Gradient Descent, phần hai mình sẽ chứng minh tại sao thuật toán Gradient Descent có thể hoạt động được, và phần cuối sẽ khảo sát về tốc độ hội tụ của thuật toán.&lt;/p&gt;
+
+&lt;h2 id=&quot;ý-tưởng-của-thuật-toán&quot;&gt;Ý tưởng của thuật toán&lt;/h2&gt;
+
+&lt;p&gt;Hồi xưa khi còn học cấp 3, mình được các thầy cô giảng về cách tìm cực trị bằng việc sử dụng đạo hàm. Ví dụ như tìm giá trị nhỏ nhất của hàm số $y=x^2$ trên tập số thực chẳng hạn. Bước đầu tiên cần làm đó chính là tính đạo hàm của nó, đó là $y’=2x$. Rồi sau đó giải phương trình $y’=0$ để tìm ra các giá trị cực trị x (hàm số này có 1 điểm cực trị là x=0). Tiếp đó, bạn phải khảo sát hàm số trên các khoảng được chia bởi các điểm cực trị (trong trưởng hợp này là $(-\infty, 0)$ và $(0, \infty)$). Cuối cùng, sau khi khảo sát xong bạn kết luận $y$ đạt GTNN khi $x=0$. Cách làm này khá hợp lí nhưng có nhiều bước quá dư thừa: không nhất thiết phải khảo sát hàm số thì mới tìm ra được GTNN (tại sao phải khảo sát toàn bộ hàm số chỉ để giải phương trình $y’=0$ cho ra kết quả?). Nếu bạn là một học sinh Chuyên toán (hoặc trường bạn không giảm tải chương này) thì bạn sẽ được biết đến một cách giải ngắn hơn hiệu quả hơn dựa trên một định lí đề cập Sách giáo khoa:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Định lí 1:&lt;/strong&gt; Cho một hàm số $f(x)$ liên tục trên $\mathbb{R}$.&lt;/p&gt;
+
+  &lt;p&gt;Khi đó, điểm $x_0$ được gọi là:&lt;/p&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;p&gt;điểm cực tiểu nếu $f’(x_0) = 0$ và $f”(x_0) &amp;gt; 0$.&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;điểm cực đại nếu $f’(x_0)=0$ và $f”(x_0) &amp;lt; 0$.&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Định lí này giúp cho việc tìm cực tiểu hoặc cực đại của hàm số trở nên dễ dàng hơn không chỉ về mặt toán học mà còn về mặt lập trình (trên thực tế, các thuật toán tối ưu hoá trong lĩnh vực Khoa học Máy tính đều cố gắng chuyển hoá các bài toán cực trị thành các bài toán giải phương trình và hệ phương trình rồi sử dụng các phương pháp lặp để tìm ra nghiệm của bài toán). Định lí 1 là tiền đề cho phương pháp Newton-Raphson trong việc tìm giá trị cực tiểu (hoặc cực đại) của một hàm số lồi (hoặc lõm). Ý tưởng rất đơn giản: giả sử $f$ đã được chứng minh là một hàm lồi (hoặc lõm), điểm tối ưu của $f$ chính là nghiệm của phương trình $f’(x) = 0$ và cũng là điểm hội tụ của dãy số $(x_n)$ xác định bởi:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\left\{\begin{array}{l}
+        x_0\\
+        x_{n + 1} = x_n - \dfrac{f'(x_n)}{f''(x_n)}\forall n\geq 0
+    \end{array}\right.&lt;/script&gt;
+
+&lt;p&gt;Phương pháp Newton-Raphson hiệu quả về mặt lí thuyết và có nhiều ứng dụng trong thực tế (như chức năng giải nghiệm trên các máy tính cầm tay có mặt trên thị trường). Tuy nhiên, khi nói đến khía cạnh ứng dụng, phương pháp này gặp phải 2 trở ngại lớn:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Phương pháp này đòi hỏi việc chọn $x_0$ rất gần so với nghiệm thực tế của bài toán, nếu không dãy số thiết lập rất dễ bị phân kì.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Trong các bài toán hàm số đa biến, việc này đòi hỏi phải tính nghịch đảo của ma trận Hessian. Tính đến hiện tại, các thuật toán tính nghịch đảo của ma trận đòi hỏi độ phức tạp thời gian và không gian rất lớn. Do đó, tuy tốc độ hội tụ của phương pháp Newton-Raphson nhanh, bộ nhớ và thời gian thực thi của phương pháp có thể sẽ hết trước khi bài toán hội tụ.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Có thuật toán nào chỉ cần tìm ra đạo hàm bậc 1 có thể suy ra được nghiệm tối ưu của hàm $f$ (nếu $f$ là hàm lồi hoặc lõm)? Đó là ý tưởng chính của thuật toán Gradient Descent. Phát biểu của thuật toán rất đơn giản như sau:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Cho hàm số lồi $f$ và dãy số $(x_n)$ được định nghĩa bởi:&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\left\{\begin{array}{l}
+        x_0\\
+        x_{n + 1} = x_n - \alpha_n * f'(x)\forall n\geq 0
+    \end{array}\right.&lt;/script&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Khi đó tồn tại dãy số không âm $(\alpha_n)$ để dãy số $(x_n)$ hội tụ về điểm cực tiểu.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Về chứng minh toán học, mình sẽ đề cập ở phần sau. Ở phần này, mình muốn cho các bạn thấy ý tưởng đằng sau thuật toán này. Ý tưởng xuất phát từ một quan sát rất tầm thường với các bạn học sinh cấp 3: nếu f giảm trên đoạn $[a, b]$ thì $f’(x)\leq 0$ và ngược lại nếu $f$ tăng trên đoạn $[a, b]$ thì $f’(x)\geq 0$. Vậy nếu chọn đại một điểm $(x_0, f(x_0))$ và $x_0$ nằm bên trái điểm cực tiểu thì $f’(x_0) &amp;lt; 0$ (giả sử f là hàm lồi) nên $x_1$ sẽ di chuyển về bên phải, tức là hướng về điểm cực tiểu (Minh hoạ bên dưới).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://cdn-images-1.medium.com/max/1000/0*En4lt8S2kEwtSkjV.gif&quot; alt=&quot;gradient_descent_left&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Ở hình này, người minh hoạ đang chỉnh &lt;span class=&quot;nv&quot;&gt;alpha_n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.1 với mọi n &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dòng đầu tiên&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+và chạy từng bước của thuật toán gradient descent. Như các bạn thấy, &lt;span class=&quot;k&quot;&gt;do
+
+&lt;/span&gt;x0 nằm bên tay trái điểm cực tiểu nên x1 sẽ được cộng một lượng dương từ x0
+
+và di chuyển về bên phải, tiến về điểm cực tiểu.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Lí luận tương tự, nếu $x_0$ nằm bên tay phải của điểm cực tiểu thì $f’(x_0) &amp;gt; 0$ và $x_1$ sẽ đi về bên trái, cũng hướng về điểm cực tiểu.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://miro.medium.com/max/864/1*8HJvJ1bmPukRvbWZaMt-bQ.gif&quot; alt=&quot;gradient_descent_right&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Ở hình này, người minh hoạ đang chỉnh &lt;span class=&quot;nv&quot;&gt;alpha_n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.01 với mọi n &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dòng đầu tiên&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+và chạy từng bước của thuật toán gradient descent. Như các bạn thấy, &lt;span class=&quot;k&quot;&gt;do
+
+&lt;/span&gt;x0 nằm bên tay phải điểm cực tiểu nên x1 sẽ bị trừ đi một lượng từ x0
+
+và di chuyển về bên trái, tiến về điểm cực tiểu.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Nếu bạn tinh ý, bạn sẽ thắc mắc liệu $x_n$ có thể di chuyển quá điểm cực tiểu không? Câu trả lời là có nếu bạn chọn dãy $(\alpha_n)$ không phú hợp ($\alpha_n$ quá lớn với mọi n). Tưởng tượng dãy $(\alpha_n)$ không phù hợp giống như bạn chơi cầu trượt khi chạm đến đáy có bôi nhớt bạn sẽ phải trượt ra thêm một đoạn nữa (và té dập mặt) thì trường hợp này cũng giống như vậy. Chính vì điều này mà $(\alpha_n)$ có một tên gọi khác là tốc độ học (tên tiếng Anh là learning rate). Hình phía dưới minh hoạ cho việc gradient descent thất bại khi chọn tốc độ học quá lớn.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://cdn-images-1.medium.com/max/1000/1*Q-2Wh0Xcy6fsGkbPFJvMhQ.gif&quot; alt=&quot;gradient_descent_fail&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Ở hình này, từ trái qua phải là các trường hợp chọn tốc độ học alpha_n bằng 0.03, 0.4, 1.02.
+
+Nếu chọn 0.03 thì x_n sẽ đi chậm về phía điểm cực tiểu. 
+
+Nếu chọn 0.4 thì x_n sẽ nhanh chóng hội tụ về điểm cực tiểu.
+
+Nếu chọn 1.02 thì x_n sẽ lạng lách và đi càng ngày càng xa điểm cực tiểu.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Vậy làm sao để chọn tốc độ học phù hợp? Đây là một câu hỏi mở cho thuật toán Gradient Descent. Thông thường, tốc độ học sẽ nằm vào trong khoảng $(0, 1)$ và thường được cố định bằng 1 hằng số qua các vòng lặp. Tuy nhiên, cách này không hiệu quả cho các ứng dụng lớn có dữ liệu nhiều chiều. Chính vì thế, đã có rất nhiều thuật toán giải quyết vấn đề chọn $(\alpha_n)$ bằng việc xây dựng dãy $(\alpha_n)$ thích nghi với từng vòng lặp. Nhưng đó sẽ là chủ đề cho các bài viết sau. Trước khi bước vào phần khảo sát về tính hội tụ của thuật toán, mình xin để phiên bản Gradient Descent cho các hàm số đa biến:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Cho $f:\mathbb{R^n}\to\mathbb{R}$ là một hàm lồi theo mọi biến và dãy vector $(x_n)$ được định nghĩa bởi:&lt;/p&gt;
+
+  &lt;script type=&quot;math/tex; mode=display&quot;&gt;\left\{\begin{array}{l}
+        x_0\\
+        x_{n + 1} = x_n - \alpha_n * \nabla f\forall n\geq 0
+    \end{array}\right.&lt;/script&gt;
+
+  &lt;p&gt;Khi đó tồn tại dãy số không âm $(\alpha_n)$ để dãy vector $(x_n)$ hội tụ về điểm cực tiểu.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;chứng-minh-sự-hội-tụ-của-thuật-toán&quot;&gt;Chứng minh sự hội tụ của thuật toán&lt;/h2&gt;
+
+&lt;p&gt;Trước hết, chúng ta cần phải chứng minh dãy số xây dựng bởi thuật toán trên hội tụ với dãy $(\alpha_n)$ thích hợp. Tất cả các chứng minh kế tiếp đây của mình sẽ thực hiện trên hàm 1 biến nhưng có thể mở rộng ra hàm nhiều biến. Mở rộng thế nào sẽ là phần của các bạn.&lt;/p&gt;
+
+&lt;p&gt;Để có thể chứng minh sự hội tụ của thuật toán Gradient Descent, chúng ta cần đến một định lí tổng quát hơn có tên là định lí Bolzano-Weierstrass. Định lí được phát biểu như sau:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Nếu dãy $(x_n)$ đơn điệu tăng và bị chặn trên hoặc đơn điệu giảm và bị chặn dưới thì dãy $(x_n)$ hội tụ.&lt;/p&gt;
+
+  &lt;p&gt;&lt;strong&gt;&lt;em&gt;Chứng minh&lt;/em&gt;&lt;/strong&gt;: Mình sẽ chứng minh với trường hợp dãy đơn điệu tăng. Chứng minh tương tự với dãy đơn điệu giảm.&lt;/p&gt;
+
+  &lt;p&gt;Do $(x_n)$ là một dãy bị chặn trên nên dãy $(x_n)$ có chặn trên đúng (chặn trên nhỏ nhất). Kí hiệu là $c$. Như vậy, với mọi số $\epsilon &amp;gt; 0$, phải tồn tại một số $n_0$ nào đó thoả $x_{n_0} &amp;gt; c - \epsilon$ (nếu không $c - epsilon$ sẽ là chặn trên đúng của dãy, vô lí). Do $(x_n)$ là một dãy tăng nên ta có thể suy ra được:&lt;/p&gt;
+
+  &lt;p&gt;với mọi $\epsilon &amp;gt; 0$, tồn tại $n_0$, sao cho với mọi $n &amp;gt; n_0$: $c - \epsilon &amp;lt; x_{n_0} &amp;lt; x_n &amp;lt; c &amp;lt; c + \epsilon\Leftrightarrow |x_n - c| &amp;lt; \epsilon$.&lt;/p&gt;
+
+  &lt;p&gt;Suy ra được $\lim_{n\to\infty} x_n = c$. Do đó ta có điều phải chứng minh.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Quay về bài toán chính, dễ thấy $x_{n+1} - x_{n} = -\alpha_n f’(x_n)$. Nếu $x_0$ nhỏ hơn điểm cực trị và ta xây dựng dãy $(\alpha_n)$ sao cho $\alpha_n &amp;lt; \frac{x_n - x^*}{f’(x_n)}$ với $x^*$ là điểm cực trị thì dãy $(x_n)$ sẽ trở thành 1 dãy tăng và bị chặn trên bởi $x^*$. Như vậy $(x_n)$ sẽ hội tụ về điểm cực tiểu. Trường hợp $x_0$ lớn hơn điểm cực tiểu với cách tương tự ta cũng có thể thu được dãy $(x_n)$ hội tụ. Vậy suy ra điều phải chứng minh. Như vậy, có thể thấy với dãy $(\alpha_n)$ phù hợp, thuật toán Gradient Descent sẽ đảm bảo sự hội tụ về điểm tối ưu.&lt;/p&gt;
+
+&lt;h2 id=&quot;tốc-độ-hội-tụ-của-gradient-descent&quot;&gt;Tốc độ hội tụ của Gradient Descent&lt;/h2&gt;
+
+&lt;p&gt;Một trong những cách đánh giá tốc độ hội tụ của một dãy số là sử dụng kí hiệu $\mathcal{O}$:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Một dãy số $(x_n)$ hội tụ đến $L$ với tốc độ $\mathcal{O}(f(n))$ nếu và chỉ nếu $|x_n - L| = \mathcal{O}(f(n))$.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Chúng ta giả sử hàm $f$ là một hàm đa biến lồi và liên tục L-Lipschitz (tức là $||\nabla f(y) - \nabla f(x)||\leq L ||y-x||$, cần phải giả sử đây là hàm L-Lipschitz để vector gradient không thay đổi đột ngột trong quá trình thực thi). Như vậy, tốc độ hội tụ của thuật toán Gradient Descent là $\mathcal{O}\left(\dfrac{1}{n}\right)$ nếu chọn $\alpha_n = \alpha &amp;lt; \dfrac{1}{L}$ với n là số lần chạy thuật toán Gradient Descent.&lt;/p&gt;
+
+&lt;p&gt;Để chứng minh được điều này, chúng ta cần chứng minh bất đẳng thức sau:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;f(x_n) - f(x^*)\leq\dfrac{\|x_0-x^*\|}{2n\alpha}&lt;/script&gt;
+
+&lt;p&gt;với $x^*$ là điểm cự tiểu, $n$ là số vòng lần thực thi Gradient Descent, và $\alpha$ là tốc độ học.&lt;/p&gt;
+
+&lt;p&gt;Do $f$ là một hàm L-Lipschitz nên&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;f(x_n)\leq f(x_{n-1})+\nabla f(x_{n-1})^T(x_n-x_{n-1})+\dfrac{L}{2}\|x_{n}-x_{n-1}\|_2^2&lt;/script&gt;
+
+&lt;p&gt;Mà $x_n - x_{n-1} = -\alpha\nabla f(x_{n-1})$ nên&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align}
+        f(x_n)&amp;\leq f(x_{n-1}) + \alpha\|\nabla f(x_{n-1})\|_2^2 + \dfrac{L}{2}\alpha^2\|\nabla f(x_{n-1})\|_2^2\nonumber\\
+        &amp;=f(x_{n-1}) + \alpha\|\nabla f(x_{n-1})\|_2^2\left(1 - \dfrac{L}{2}\alpha\right)\nonumber\\
+        &amp;\leq f(x_{n-1}) - \dfrac{\alpha}{2}\|\nabla f(x_{n-1})\|_2^2\label{eq:1}
+    \end{align} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Do $f$ là một hàm đa biến lồi nên&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}
+        f(x*)\geq f(x_{n-1})+\nabla f(x_{n-1})^T(x^* - x_{n-1})\nonumber\\
+        \Leftrightarrow f(x_{n-1})\leq f(x^*)+\nabla f(x_{n-1})^T(x_{n-1} - x^*)\label{eq:2}
+    \end{align}&lt;/script&gt;
+
+&lt;p&gt;Thay $(\ref{eq:2})$ vào $(\ref{eq:1})$, ta có:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align}
+        f(x_n) &amp;\leq f(x^*)+\nabla f(x_{n-1})^T(x_{n-1} - x^*) - \dfrac{\alpha}{2}\|\nabla f(x_{n-1})\|_2^2\nonumber\\
+        &amp;=f(x^*) + \dfrac{1}{2\alpha}\left(2\alpha\nabla f(x_{n-1})^T(x_{n-1} - x^*) - \alpha^2\|\nabla f(x_{n-1})\|_2^2\right)\nonumber\\
+        &amp;=f(x^*) + \dfrac{1}{2\alpha}(\|x_{n-1} - x^*\|_2^2 - \|x_{n-1} - x^* - \alpha\nabla f(x_{n-1})\|_2^2)\nonumber\\
+        &amp;=f(x^*) + \dfrac{1}{2\alpha}(\|x_{n-1} - x^*\|_2^2 - \|x_n - x^*\|_2^2)\nonumber\\
+        \Leftrightarrow &amp;f(x_n) - f(x^*)\leq\dfrac{1}{2\alpha}(\|x_{n-1} - x^*\|_2^2 - \|x_n - x^*\|_2^2)\nonumber
+    \end{align} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Từ đây, ta có được&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\sum_{i=1}^nf(x_i) - f(x^*)\leq\dfrac{1}{2\alpha}(\|x_0 - x^*\|_2^2 - \|x_n - x^*\|_2^2)&lt;/script&gt;
+
+&lt;p&gt;Vì $f(x_i)$ giảm khi i tăng nên $n(f(x_n) - f(x^*))\leq\dfrac{1}{2\alpha}(||x_0 - x^*||_2^2 - ||x_n - x^*||_2^2)\leq\dfrac{1}{2\alpha}||x_0 - x^*||_2^2$ hay $f(x_n) - f(x^*)\leq\dfrac{||x_0 - x^*||_2^2}{2n\alpha}$. Từ đây, ta có được điều phải chứng minh. Như vậy, trong trường hợp trung bình, thuật toán Gradient Descent có tốc độ hội tụ $\mathcal{O}\left(\dfrac{1}{n}\right)$ với $\alpha\leq\dfrac{1}{L}$. Tuy tốc độ này không nhanh bằng việc sử dụng phương pháp Newton-Raphson (hội tụ bậc 2), thuật toán Gradient Descent ổn định hơn do chỉ tính đạo hàm một lần và vẫn đảm bảo tốc độ hội tụ ở ngưỡng chấp nhận được.&lt;/p&gt;
+
+&lt;h2 id=&quot;kết-luận&quot;&gt;Kết luận&lt;/h2&gt;
+
+&lt;p&gt;Thuật toán Gradient Descent nhìn chung là một thuật toán ổn định với sự đảm bảo trong việc tìm ra nghiệm tối ưu sau một số lượng vòng lặp đủ lớn. Ý tưởng của thuật toán Gradient Descent cũng rất đơn giản trực tiếp nhưng vẫn có thể đánh bại các thuật toán tối ưu hoá lâu đời. Điều đáng tiếc là thuật toán Gradient Descent có tốc độ hội tụ chậm hơn các phương pháp lâu đời khác và việc phải lựa chọn tốc độ học sao cho phù hợp đôi khi đòi hỏi sự dày công thử nghiệm (việc tính hệ số Lipschitz cũng đòi hỏi độ phức tạp khá lớn). Chính vì vậy, nhiều phiên bản cải tiến hơn của Gradient Descent đã ra đời nhưng đó là chủ đề cho các bài viết tiếp theo.&lt;/p&gt;</content><author><name>Pham Hoang Minh</name></author><category term="maths" /><category term="optimization" /><category term="convergence-analysis" /><summary type="html">Giới thiệu</summary></entry><entry><title type="html">Vietnam AQI Visualization</title><link href="http://localhost:4000/aqi-viz" rel="alternate" type="text/html" title="Vietnam AQI Visualization" /><published>2021-06-01T00:00:00+07:00</published><updated>2021-06-01T00:00:00+07:00</updated><id>http://localhost:4000/aqi-viz</id><content type="html" xml:base="http://localhost:4000/aqi-viz">&lt;!--&lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
     &lt;meta charset=&quot;UTF-8&quot;&gt;
     &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
@@ -230,190 +757,4 @@ J = \sum_{i=1}^m |y_i - f(\vec{x_i})|
 &lt;p&gt;With this approach, the cross-entropy loss function of Logistic Regression can also be derived. The only difference is that Logistic Regression assume its model as $g(\vec{x_i}) = \frac{1}{1+\exp\{-f(\vec{x_i})\}}$, where $f$ is called the boundary decision. The derivation is left for the reader, and the derivation $g$ will be ommitted since it is out of the scope of this blog.&lt;/p&gt;
 
 &lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-&lt;p&gt;The title of this blog is to emphasize to the role of likelihood in the field of Machine Learning, a concept that has been overlooked in a lot of basic statistical material. This blog has clarified the difference between Frequentist and Bayesian approach, and has linked a lot of familiar concept in Statistics to Bayesian one. It also shows an application in one of the most popular, yet fundamental algorithm in the field of Machine Learning, in general, and of Deep Learning, in specific, which provides a building block for the derivation of loss function for new model development.&lt;/p&gt;</content><author><name>Pham Hoang Minh</name></author><category term="statistics" /><category term="likelihood" /><category term="bayesian" /><category term="frequentist" /><summary type="html">Introduction The very first machine learning model that one would construct when starting his or her journey in the field of Machine Learning is Linear Regression, an algorithm to find the best linear model to fit a data set. In Machine Learning approach, Linear Regression has five main steps: Initialize a weight vector Pass the feature matrix to the model Calculate the mean-squared-error (MSE) loss function:</summary></entry><entry><title type="html">Toán học đằng sau thuật toán Gradient Descent.</title><link href="http://localhost:4000/gradient-descent" rel="alternate" type="text/html" title="Toán học đằng sau thuật toán Gradient Descent." /><published>2020-06-02T00:00:00+07:00</published><updated>2020-06-02T00:00:00+07:00</updated><id>http://localhost:4000/gradient-descent</id><content type="html" xml:base="http://localhost:4000/gradient-descent">&lt;h2 id=&quot;giới-thiệu&quot;&gt;Giới thiệu&lt;/h2&gt;
-
-&lt;p&gt;Chuyện là bây giờ mình sắp kết thúc năm ba rồi và đang trong quá trình chuẩn bị thực tập. Nhưng mà portfolio của mình yếu quá nên giờ mình sẽ quay trở lại viết blog tiếp. Rất may mắn là mình kiếm được một chủ đề không mấy là mới nhưng lại khá là quan trọng trong quá trình học của mình. Mặc dù trường mình có dạy phương pháp này nhưng giáo viên dạy rất là khô khan và lan man (đây cũng là động lực chính để mình viết blog này). Mình mong bài viết này tuy ngắn nhưng sẽ bao quát hết được ý tưởng đằng sau của thuật toán và các khảo sát lí thuyết của thuật toán về tốc độ hội tụ.&lt;/p&gt;
-
-&lt;p&gt;Thuật toán Gradient Descent lần đầu tiên được tìm ra bởi nhà toán học nổi tiếng Cauchy (cũng là nhân vật ám ảnh với các bạn học sinh cấp 2 với những bài toán bất đẳng thức khó). Sau đó phương pháp này được nghiên cứu bởi Haskell Cury (cha đẻ của ngôn ngữ lập trình Haskell, đi đầu về phong cách lập trình hướng hàm (functional programming)) và từ đó, Gradient Descent khá nổi tiếng trong giới khoa học dưới cái tên steepest descent.&lt;/p&gt;
-
-&lt;p&gt;Bài blog này sẽ được chia làm ba phần với mức độ khó tăng dần: phần đầu mình sẽ giới thiệu về ý tưởng đằng sau thuật toán Gradient Descent, phần hai mình sẽ chứng minh tại sao thuật toán Gradient Descent có thể hoạt động được, và phần cuối sẽ khảo sát về tốc độ hội tụ của thuật toán.&lt;/p&gt;
-
-&lt;h2 id=&quot;ý-tưởng-của-thuật-toán&quot;&gt;Ý tưởng của thuật toán&lt;/h2&gt;
-
-&lt;p&gt;Hồi xưa khi còn học cấp 3, mình được các thầy cô giảng về cách tìm cực trị bằng việc sử dụng đạo hàm. Ví dụ như tìm giá trị nhỏ nhất của hàm số $y=x^2$ trên tập số thực chẳng hạn. Bước đầu tiên cần làm đó chính là tính đạo hàm của nó, đó là $y’=2x$. Rồi sau đó giải phương trình $y’=0$ để tìm ra các giá trị cực trị x (hàm số này có 1 điểm cực trị là x=0). Tiếp đó, bạn phải khảo sát hàm số trên các khoảng được chia bởi các điểm cực trị (trong trưởng hợp này là $(-\infty, 0)$ và $(0, \infty)$). Cuối cùng, sau khi khảo sát xong bạn kết luận $y$ đạt GTNN khi $x=0$. Cách làm này khá hợp lí nhưng có nhiều bước quá dư thừa: không nhất thiết phải khảo sát hàm số thì mới tìm ra được GTNN (tại sao phải khảo sát toàn bộ hàm số chỉ để giải phương trình $y’=0$ cho ra kết quả?). Nếu bạn là một học sinh Chuyên toán (hoặc trường bạn không giảm tải chương này) thì bạn sẽ được biết đến một cách giải ngắn hơn hiệu quả hơn dựa trên một định lí đề cập Sách giáo khoa:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Định lí 1:&lt;/strong&gt; Cho một hàm số $f(x)$ liên tục trên $\mathbb{R}$.&lt;/p&gt;
-
-  &lt;p&gt;Khi đó, điểm $x_0$ được gọi là:&lt;/p&gt;
-
-  &lt;ul&gt;
-    &lt;li&gt;
-      &lt;p&gt;điểm cực tiểu nếu $f’(x_0) = 0$ và $f”(x_0) &amp;gt; 0$.&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;điểm cực đại nếu $f’(x_0)=0$ và $f”(x_0) &amp;lt; 0$.&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Định lí này giúp cho việc tìm cực tiểu hoặc cực đại của hàm số trở nên dễ dàng hơn không chỉ về mặt toán học mà còn về mặt lập trình (trên thực tế, các thuật toán tối ưu hoá trong lĩnh vực Khoa học Máy tính đều cố gắng chuyển hoá các bài toán cực trị thành các bài toán giải phương trình và hệ phương trình rồi sử dụng các phương pháp lặp để tìm ra nghiệm của bài toán). Định lí 1 là tiền đề cho phương pháp Newton-Raphson trong việc tìm giá trị cực tiểu (hoặc cực đại) của một hàm số lồi (hoặc lõm). Ý tưởng rất đơn giản: giả sử $f$ đã được chứng minh là một hàm lồi (hoặc lõm), điểm tối ưu của $f$ chính là nghiệm của phương trình $f’(x) = 0$ và cũng là điểm hội tụ của dãy số $(x_n)$ xác định bởi:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\left\{\begin{array}{l}
-        x_0\\
-        x_{n + 1} = x_n - \dfrac{f'(x_n)}{f''(x_n)}\forall n\geq 0
-    \end{array}\right.&lt;/script&gt;
-
-&lt;p&gt;Phương pháp Newton-Raphson hiệu quả về mặt lí thuyết và có nhiều ứng dụng trong thực tế (như chức năng giải nghiệm trên các máy tính cầm tay có mặt trên thị trường). Tuy nhiên, khi nói đến khía cạnh ứng dụng, phương pháp này gặp phải 2 trở ngại lớn:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Phương pháp này đòi hỏi việc chọn $x_0$ rất gần so với nghiệm thực tế của bài toán, nếu không dãy số thiết lập rất dễ bị phân kì.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Trong các bài toán hàm số đa biến, việc này đòi hỏi phải tính nghịch đảo của ma trận Hessian. Tính đến hiện tại, các thuật toán tính nghịch đảo của ma trận đòi hỏi độ phức tạp thời gian và không gian rất lớn. Do đó, tuy tốc độ hội tụ của phương pháp Newton-Raphson nhanh, bộ nhớ và thời gian thực thi của phương pháp có thể sẽ hết trước khi bài toán hội tụ.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Có thuật toán nào chỉ cần tìm ra đạo hàm bậc 1 có thể suy ra được nghiệm tối ưu của hàm $f$ (nếu $f$ là hàm lồi hoặc lõm)? Đó là ý tưởng chính của thuật toán Gradient Descent. Phát biểu của thuật toán rất đơn giản như sau:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Cho hàm số lồi $f$ và dãy số $(x_n)$ được định nghĩa bởi:&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\left\{\begin{array}{l}
-        x_0\\
-        x_{n + 1} = x_n - \alpha_n * f'(x)\forall n\geq 0
-    \end{array}\right.&lt;/script&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Khi đó tồn tại dãy số không âm $(\alpha_n)$ để dãy số $(x_n)$ hội tụ về điểm cực tiểu.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Về chứng minh toán học, mình sẽ đề cập ở phần sau. Ở phần này, mình muốn cho các bạn thấy ý tưởng đằng sau thuật toán này. Ý tưởng xuất phát từ một quan sát rất tầm thường với các bạn học sinh cấp 3: nếu f giảm trên đoạn $[a, b]$ thì $f’(x)\leq 0$ và ngược lại nếu $f$ tăng trên đoạn $[a, b]$ thì $f’(x)\geq 0$. Vậy nếu chọn đại một điểm $(x_0, f(x_0))$ và $x_0$ nằm bên trái điểm cực tiểu thì $f’(x_0) &amp;lt; 0$ (giả sử f là hàm lồi) nên $x_1$ sẽ di chuyển về bên phải, tức là hướng về điểm cực tiểu (Minh hoạ bên dưới).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://cdn-images-1.medium.com/max/1000/0*En4lt8S2kEwtSkjV.gif&quot; alt=&quot;gradient_descent_left&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Ở hình này, người minh hoạ đang chỉnh &lt;span class=&quot;nv&quot;&gt;alpha_n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.1 với mọi n &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dòng đầu tiên&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-
-và chạy từng bước của thuật toán gradient descent. Như các bạn thấy, &lt;span class=&quot;k&quot;&gt;do
-
-&lt;/span&gt;x0 nằm bên tay trái điểm cực tiểu nên x1 sẽ được cộng một lượng dương từ x0
-
-và di chuyển về bên phải, tiến về điểm cực tiểu.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Lí luận tương tự, nếu $x_0$ nằm bên tay phải của điểm cực tiểu thì $f’(x_0) &amp;gt; 0$ và $x_1$ sẽ đi về bên trái, cũng hướng về điểm cực tiểu.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://miro.medium.com/max/864/1*8HJvJ1bmPukRvbWZaMt-bQ.gif&quot; alt=&quot;gradient_descent_right&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Ở hình này, người minh hoạ đang chỉnh &lt;span class=&quot;nv&quot;&gt;alpha_n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0.01 với mọi n &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dòng đầu tiên&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-
-và chạy từng bước của thuật toán gradient descent. Như các bạn thấy, &lt;span class=&quot;k&quot;&gt;do
-
-&lt;/span&gt;x0 nằm bên tay phải điểm cực tiểu nên x1 sẽ bị trừ đi một lượng từ x0
-
-và di chuyển về bên trái, tiến về điểm cực tiểu.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Nếu bạn tinh ý, bạn sẽ thắc mắc liệu $x_n$ có thể di chuyển quá điểm cực tiểu không? Câu trả lời là có nếu bạn chọn dãy $(\alpha_n)$ không phú hợp ($\alpha_n$ quá lớn với mọi n). Tưởng tượng dãy $(\alpha_n)$ không phù hợp giống như bạn chơi cầu trượt khi chạm đến đáy có bôi nhớt bạn sẽ phải trượt ra thêm một đoạn nữa (và té dập mặt) thì trường hợp này cũng giống như vậy. Chính vì điều này mà $(\alpha_n)$ có một tên gọi khác là tốc độ học (tên tiếng Anh là learning rate). Hình phía dưới minh hoạ cho việc gradient descent thất bại khi chọn tốc độ học quá lớn.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://cdn-images-1.medium.com/max/1000/1*Q-2Wh0Xcy6fsGkbPFJvMhQ.gif&quot; alt=&quot;gradient_descent_fail&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Ở hình này, từ trái qua phải là các trường hợp chọn tốc độ học alpha_n bằng 0.03, 0.4, 1.02.
-
-Nếu chọn 0.03 thì x_n sẽ đi chậm về phía điểm cực tiểu. 
-
-Nếu chọn 0.4 thì x_n sẽ nhanh chóng hội tụ về điểm cực tiểu.
-
-Nếu chọn 1.02 thì x_n sẽ lạng lách và đi càng ngày càng xa điểm cực tiểu.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Vậy làm sao để chọn tốc độ học phù hợp? Đây là một câu hỏi mở cho thuật toán Gradient Descent. Thông thường, tốc độ học sẽ nằm vào trong khoảng $(0, 1)$ và thường được cố định bằng 1 hằng số qua các vòng lặp. Tuy nhiên, cách này không hiệu quả cho các ứng dụng lớn có dữ liệu nhiều chiều. Chính vì thế, đã có rất nhiều thuật toán giải quyết vấn đề chọn $(\alpha_n)$ bằng việc xây dựng dãy $(\alpha_n)$ thích nghi với từng vòng lặp. Nhưng đó sẽ là chủ đề cho các bài viết sau. Trước khi bước vào phần khảo sát về tính hội tụ của thuật toán, mình xin để phiên bản Gradient Descent cho các hàm số đa biến:&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;Cho $f:\mathbb{R^n}\to\mathbb{R}$ là một hàm lồi theo mọi biến và dãy vector $(x_n)$ được định nghĩa bởi:&lt;/p&gt;
-
-  &lt;script type=&quot;math/tex; mode=display&quot;&gt;\left\{\begin{array}{l}
-        x_0\\
-        x_{n + 1} = x_n - \alpha_n * \nabla f\forall n\geq 0
-    \end{array}\right.&lt;/script&gt;
-
-  &lt;p&gt;Khi đó tồn tại dãy số không âm $(\alpha_n)$ để dãy vector $(x_n)$ hội tụ về điểm cực tiểu.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;chứng-minh-sự-hội-tụ-của-thuật-toán&quot;&gt;Chứng minh sự hội tụ của thuật toán&lt;/h2&gt;
-
-&lt;p&gt;Trước hết, chúng ta cần phải chứng minh dãy số xây dựng bởi thuật toán trên hội tụ với dãy $(\alpha_n)$ thích hợp. Tất cả các chứng minh kế tiếp đây của mình sẽ thực hiện trên hàm 1 biến nhưng có thể mở rộng ra hàm nhiều biến. Mở rộng thế nào sẽ là phần của các bạn.&lt;/p&gt;
-
-&lt;p&gt;Để có thể chứng minh sự hội tụ của thuật toán Gradient Descent, chúng ta cần đến một định lí tổng quát hơn có tên là định lí Bolzano-Weierstrass. Định lí được phát biểu như sau:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Nếu dãy $(x_n)$ đơn điệu tăng và bị chặn trên hoặc đơn điệu giảm và bị chặn dưới thì dãy $(x_n)$ hội tụ.&lt;/p&gt;
-
-  &lt;p&gt;&lt;strong&gt;&lt;em&gt;Chứng minh&lt;/em&gt;&lt;/strong&gt;: Mình sẽ chứng minh với trường hợp dãy đơn điệu tăng. Chứng minh tương tự với dãy đơn điệu giảm.&lt;/p&gt;
-
-  &lt;p&gt;Do $(x_n)$ là một dãy bị chặn trên nên dãy $(x_n)$ có chặn trên đúng (chặn trên nhỏ nhất). Kí hiệu là $c$. Như vậy, với mọi số $\epsilon &amp;gt; 0$, phải tồn tại một số $n_0$ nào đó thoả $x_{n_0} &amp;gt; c - \epsilon$ (nếu không $c - epsilon$ sẽ là chặn trên đúng của dãy, vô lí). Do $(x_n)$ là một dãy tăng nên ta có thể suy ra được:&lt;/p&gt;
-
-  &lt;p&gt;với mọi $\epsilon &amp;gt; 0$, tồn tại $n_0$, sao cho với mọi $n &amp;gt; n_0$: $c - \epsilon &amp;lt; x_{n_0} &amp;lt; x_n &amp;lt; c &amp;lt; c + \epsilon\Leftrightarrow |x_n - c| &amp;lt; \epsilon$.&lt;/p&gt;
-
-  &lt;p&gt;Suy ra được $\lim_{n\to\infty} x_n = c$. Do đó ta có điều phải chứng minh.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Quay về bài toán chính, dễ thấy $x_{n+1} - x_{n} = -\alpha_n f’(x_n)$. Nếu $x_0$ nhỏ hơn điểm cực trị và ta xây dựng dãy $(\alpha_n)$ sao cho $\alpha_n &amp;lt; \frac{x_n - x^*}{f’(x_n)}$ với $x^*$ là điểm cực trị thì dãy $(x_n)$ sẽ trở thành 1 dãy tăng và bị chặn trên bởi $x^*$. Như vậy $(x_n)$ sẽ hội tụ về điểm cực tiểu. Trường hợp $x_0$ lớn hơn điểm cực tiểu với cách tương tự ta cũng có thể thu được dãy $(x_n)$ hội tụ. Vậy suy ra điều phải chứng minh. Như vậy, có thể thấy với dãy $(\alpha_n)$ phù hợp, thuật toán Gradient Descent sẽ đảm bảo sự hội tụ về điểm tối ưu.&lt;/p&gt;
-
-&lt;h2 id=&quot;tốc-độ-hội-tụ-của-gradient-descent&quot;&gt;Tốc độ hội tụ của Gradient Descent&lt;/h2&gt;
-
-&lt;p&gt;Một trong những cách đánh giá tốc độ hội tụ của một dãy số là sử dụng kí hiệu $\mathcal{O}$:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Một dãy số $(x_n)$ hội tụ đến $L$ với tốc độ $\mathcal{O}(f(n))$ nếu và chỉ nếu $|x_n - L| = \mathcal{O}(f(n))$.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Chúng ta giả sử hàm $f$ là một hàm đa biến lồi và liên tục L-Lipschitz (tức là $||\nabla f(y) - \nabla f(x)||\leq L ||y-x||$, cần phải giả sử đây là hàm L-Lipschitz để vector gradient không thay đổi đột ngột trong quá trình thực thi). Như vậy, tốc độ hội tụ của thuật toán Gradient Descent là $\mathcal{O}\left(\dfrac{1}{n}\right)$ nếu chọn $\alpha_n = \alpha &amp;lt; \dfrac{1}{L}$ với n là số lần chạy thuật toán Gradient Descent.&lt;/p&gt;
-
-&lt;p&gt;Để chứng minh được điều này, chúng ta cần chứng minh bất đẳng thức sau:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;f(x_n) - f(x^*)\leq\dfrac{\|x_0-x^*\|}{2n\alpha}&lt;/script&gt;
-
-&lt;p&gt;với $x^*$ là điểm cự tiểu, $n$ là số vòng lần thực thi Gradient Descent, và $\alpha$ là tốc độ học.&lt;/p&gt;
-
-&lt;p&gt;Do $f$ là một hàm L-Lipschitz nên&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;f(x_n)\leq f(x_{n-1})+\nabla f(x_{n-1})^T(x_n-x_{n-1})+\dfrac{L}{2}\|x_{n}-x_{n-1}\|_2^2&lt;/script&gt;
-
-&lt;p&gt;Mà $x_n - x_{n-1} = -\alpha\nabla f(x_{n-1})$ nên&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align}
-        f(x_n)&amp;\leq f(x_{n-1}) + \alpha\|\nabla f(x_{n-1})\|_2^2 + \dfrac{L}{2}\alpha^2\|\nabla f(x_{n-1})\|_2^2\nonumber\\
-        &amp;=f(x_{n-1}) + \alpha\|\nabla f(x_{n-1})\|_2^2\left(1 - \dfrac{L}{2}\alpha\right)\nonumber\\
-        &amp;\leq f(x_{n-1}) - \dfrac{\alpha}{2}\|\nabla f(x_{n-1})\|_2^2\label{eq:1}
-    \end{align} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;Do $f$ là một hàm đa biến lồi nên&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}
-        f(x*)\geq f(x_{n-1})+\nabla f(x_{n-1})^T(x^* - x_{n-1})\nonumber\\
-        \Leftrightarrow f(x_{n-1})\leq f(x^*)+\nabla f(x_{n-1})^T(x_{n-1} - x^*)\label{eq:2}
-    \end{align}&lt;/script&gt;
-
-&lt;p&gt;Thay $(\ref{eq:2})$ vào $(\ref{eq:1})$, ta có:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align}
-        f(x_n) &amp;\leq f(x^*)+\nabla f(x_{n-1})^T(x_{n-1} - x^*) - \dfrac{\alpha}{2}\|\nabla f(x_{n-1})\|_2^2\nonumber\\
-        &amp;=f(x^*) + \dfrac{1}{2\alpha}\left(2\alpha\nabla f(x_{n-1})^T(x_{n-1} - x^*) - \alpha^2\|\nabla f(x_{n-1})\|_2^2\right)\nonumber\\
-        &amp;=f(x^*) + \dfrac{1}{2\alpha}(\|x_{n-1} - x^*\|_2^2 - \|x_{n-1} - x^* - \alpha\nabla f(x_{n-1})\|_2^2)\nonumber\\
-        &amp;=f(x^*) + \dfrac{1}{2\alpha}(\|x_{n-1} - x^*\|_2^2 - \|x_n - x^*\|_2^2)\nonumber\\
-        \Leftrightarrow &amp;f(x_n) - f(x^*)\leq\dfrac{1}{2\alpha}(\|x_{n-1} - x^*\|_2^2 - \|x_n - x^*\|_2^2)\nonumber
-    \end{align} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;Từ đây, ta có được&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\sum_{i=1}^nf(x_i) - f(x^*)\leq\dfrac{1}{2\alpha}(\|x_0 - x^*\|_2^2 - \|x_n - x^*\|_2^2)&lt;/script&gt;
-
-&lt;p&gt;Vì $f(x_i)$ giảm khi i tăng nên $n(f(x_n) - f(x^*))\leq\dfrac{1}{2\alpha}(||x_0 - x^*||_2^2 - ||x_n - x^*||_2^2)\leq\dfrac{1}{2\alpha}||x_0 - x^*||_2^2$ hay $f(x_n) - f(x^*)\leq\dfrac{||x_0 - x^*||_2^2}{2n\alpha}$. Từ đây, ta có được điều phải chứng minh. Như vậy, trong trường hợp trung bình, thuật toán Gradient Descent có tốc độ hội tụ $\mathcal{O}\left(\dfrac{1}{n}\right)$ với $\alpha\leq\dfrac{1}{L}$. Tuy tốc độ này không nhanh bằng việc sử dụng phương pháp Newton-Raphson (hội tụ bậc 2), thuật toán Gradient Descent ổn định hơn do chỉ tính đạo hàm một lần và vẫn đảm bảo tốc độ hội tụ ở ngưỡng chấp nhận được.&lt;/p&gt;
-
-&lt;h2 id=&quot;kết-luận&quot;&gt;Kết luận&lt;/h2&gt;
-
-&lt;p&gt;Thuật toán Gradient Descent nhìn chung là một thuật toán ổn định với sự đảm bảo trong việc tìm ra nghiệm tối ưu sau một số lượng vòng lặp đủ lớn. Ý tưởng của thuật toán Gradient Descent cũng rất đơn giản trực tiếp nhưng vẫn có thể đánh bại các thuật toán tối ưu hoá lâu đời. Điều đáng tiếc là thuật toán Gradient Descent có tốc độ hội tụ chậm hơn các phương pháp lâu đời khác và việc phải lựa chọn tốc độ học sao cho phù hợp đôi khi đòi hỏi sự dày công thử nghiệm (việc tính hệ số Lipschitz cũng đòi hỏi độ phức tạp khá lớn). Chính vì vậy, nhiều phiên bản cải tiến hơn của Gradient Descent đã ra đời nhưng đó là chủ đề cho các bài viết tiếp theo.&lt;/p&gt;</content><author><name>Pham Hoang Minh</name></author><category term="maths" /><category term="optimization" /><category term="convergence-analysis" /><summary type="html">Giới thiệu</summary></entry></feed>
+&lt;p&gt;The title of this blog is to emphasize to the role of likelihood in the field of Machine Learning, a concept that has been overlooked in a lot of basic statistical material. This blog has clarified the difference between Frequentist and Bayesian approach, and has linked a lot of familiar concept in Statistics to Bayesian one. It also shows an application in one of the most popular, yet fundamental algorithm in the field of Machine Learning, in general, and of Deep Learning, in specific, which provides a building block for the derivation of loss function for new model development.&lt;/p&gt;</content><author><name>Pham Hoang Minh</name></author><category term="statistics" /><category term="likelihood" /><category term="bayesian" /><category term="frequentist" /><summary type="html">Introduction The very first machine learning model that one would construct when starting his or her journey in the field of Machine Learning is Linear Regression, an algorithm to find the best linear model to fit a data set. In Machine Learning approach, Linear Regression has five main steps: Initialize a weight vector Pass the feature matrix to the model Calculate the mean-squared-error (MSE) loss function:</summary></entry></feed>
