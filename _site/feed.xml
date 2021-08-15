@@ -1,4 +1,261 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-07-20T14:46:31+07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Wi-tech’s Blog</title><subtitle>A blog post about technical stuff, especially machine learning by an IT student from International University</subtitle><entry><title type="html">Toán học đằng sau thuật toán hồi qui tuyến tính (Linear Regression).</title><link href="http://localhost:4000/linear-regression" rel="alternate" type="text/html" title="Toán học đằng sau thuật toán hồi qui tuyến tính (Linear Regression)." /><published>2021-06-26T00:00:00+07:00</published><updated>2021-06-26T00:00:00+07:00</updated><id>http://localhost:4000/linear-regression</id><content type="html" xml:base="http://localhost:4000/linear-regression">&lt;h2 id=&quot;giới-thiệu&quot;&gt;Giới thiệu&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-08-15T22:49:34+07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Wi-tech’s Blog</title><subtitle>A blog post about technical stuff, especially machine learning by an IT student from International University</subtitle><entry><title type="html">RL Series - Thuật toán và value iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông.</title><link href="http://localhost:4000/pi-vi" rel="alternate" type="text/html" title="RL Series - Thuật toán và value iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông." /><published>2021-08-14T00:00:00+07:00</published><updated>2021-08-14T00:00:00+07:00</updated><id>http://localhost:4000/pi-vi</id><content type="html" xml:base="http://localhost:4000/pi-vi">&lt;h2 id=&quot;1-giới-thiệu&quot;&gt;1. Giới thiệu&lt;/h2&gt;
+
+&lt;p&gt;Lần viết blog này (và có thể là những lần viết sắp tới), mình sẽ viết về vấn đề mà mình chuẩn bị phải làm luận văn về nó để tốt nghiệp (năm cuối rồi các bạn, thật là khổ). Thế nên, được sự góp ý của giáo viên hướng dẫn của mình, mình sẽ viết blog về các thuật toán học tăng cường (&lt;strong&gt;Reinforcement Learning&lt;/strong&gt;) rồi kèm với đó là tìm kiếm chủ đề nghiên cứu phù hợp với mình. Mục tiêu của bài viết này sẽ cho các bạn một cái nhìn tổng quan nhất về các bài toán học tăng cường và giới thiệu 2 thuật toán cơ bản nhất trong lĩnh vực này là &lt;strong&gt;Policy Iteration&lt;/strong&gt; và &lt;strong&gt;Value Iteration&lt;/strong&gt;. Trong bài viết này, nhiều thuật ngữ chuyên ngành mình xin được phép không sử dụng từ Tiếng Việt vì hầu hết các bản dịch tiếng Việt đều không ổn và không diễn tả hết nghĩa của thuật toán.&lt;/p&gt;
+
+&lt;h2 id=&quot;2-ý-tưởng-đằng-sau-bài-toán-reinforcement-learning&quot;&gt;2. Ý tưởng đằng sau bài toán Reinforcement Learning&lt;/h2&gt;
+
+&lt;p&gt;Như các bạn đã biết, máy học hay machine learning là một lĩnh vực nhỏ của trí tuệ nhân tạo sử dụng các mô hình để tìm ra giải pháp tổng quát nhất cho 1 vấn đề nào đó dựa trên kinh nghiệm có sẵn. Ví dụ như các mạng tích chập cố gắng xây dựng một mô hình tổng quát để gán nhãn cho ảnh dựa trên một tập dự liệu ảnh đã gán nhãn sẵn (1), hay thuật toán K-Means xây dựng một mô hình để nhóm các thông tin khách hàng và từ đó có thể phân khúc thụ trường (2). Hai ví dụ trên cũng là hai ví dụ điển hình của hai loại bài toán phổ biến nhất trong lĩnh vực máy học: học có giám sát (ví dụ 1) và học không giám sát (ví dụ 2). Với các bài toán học có giám sát, điều tiên quyết là cần một lượng dữ liệu lớn đã dán nhãn và mục tiêu là xây dựng mô hình để tổng quát hoá mối quan hệ giữa dữ liệu và nhãn. Học không có giám sát thì ngược lại cần 1 lượng dữ liệu lớn nhưng không có nhãn và thường sử dụng các thuật toán để tìm 1 cách nhóm dữ liệu phù hợp để có thể chia dữ liệu ra thành nhiều phần nhỏ tách biệt nhau. Ngoài ra, học không giám sát còn bao gồm cả việc đơn giản hoá dữ liệu huấn luyện để có thể sử dụng vào trong các thuật toán học có giám sát (ví dụ tiêu biểu là hai thuật toán PCA và LDA).&lt;/p&gt;
+
+&lt;p&gt;Tuy nhiên, trong một số trường hợp, việc thu được dữ liệu để huấn luyện trước khi triển khai vào thực tế lại là một điều không thể thực hiện. Ví dụ như trong bài toán tìm đường đi nhanh nhất đi từ điểm A đến điểm B, ngay cả khi bạn biết được một đồ thị đầy đủ giữa hai điểm A và B, bài toán này sẽ trở nên bất khả thi nếu bạn cho thêm các yếu tố ngẫu nhiên như kẹt xe, đèn đỏ, hay các yếu tố thiên tai. Trên các bài giảng lí thuyết, các vấn đề này thường được bỏ qua để đơn giản hoá vấn đề, song, trên thực tế, dưới sự trợ giúp của các công cụ như Google Maps, việc biết trước rằng 1 con đường đang diễn ra ùn tắc là một điều rất dễ trong thời gian ngắn nhưng lại cực kì khó nếu muốn biết thu thập trước và sử dụng nó làm dữ liệu cho quá trình huấn luyện sau này vì dữ liệu đó chỉ giá trị tại một thời điểm nhất định và trở nên vô dụng khi việc ùn tắc đã chấm dứt. Đây chính là lúc mà bài toán Reinforcement Learning được sử dụng để giải quyết vấn đề. Bài toán Reinforcement Learning (RL) nhắm đến việc cải thiện mô hình dựa trên dữ liệu thực tế và tồn tại trong một thời gian ngắn nhưng ảnh hưởng đến toàn bộ 1 quá trình. Trong bài toán tìm đường đi nhanh nhất, một con đường ngắn nhất đi từ A đến B có thể tốn nhiều thời gian nhất vì ai cũng biết nó là con đường ngắn nhất nên ai cũng đổ xô đi con đường đó khiến nó trở nên không còn tối ưu nữa. Vậy một thuật toán RL hiệu quả cần phải biết cách thay đổi con đường sao cho phù hợp với tình cảnh thực tế.&lt;/p&gt;
+
+&lt;p&gt;Trong bài toán RL, luôn luôn có 1 agent và 1 environment. Trong bài toán tìm đường đi, agent chính là người lái xe và environment chính là toàn cảnh những con đường đi từ A đến B kèm với các yếu tố ngẫu nhiên. Các thuật toán RL sẽ cố gắng tìm ra chiến lược (&lt;strong&gt;policy&lt;/strong&gt;) tốt nhất để có thể đi từ A đến B bằng cách cho agent tương tác với environment nhiều lần (ví dụ như lái xe nhiều lần từ A đến B). Sự tương tác của một agent với một environment được mô tả rất đầy đủ trong hình sau:&lt;/p&gt;
+
+&lt;center&gt;
+    &lt;img src=&quot;data:image/png;base64,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&quot; /&gt;
+    &lt;p&gt;
+        &lt;h5&gt;Hình 1: Tương tác giữa agent và environment&lt;/h5&gt;
+    &lt;/p&gt;
+&lt;/center&gt;
+
+&lt;p&gt;Đầu tiên, agent sẽ tương tác với environment bằng cách thực hiện một hành động A. Hành động A này sẽ làm thay đổi trạng thái của environment. Environment sau khi bị thay đổi trạng thái sẽ phản hồi A trạng thái đã thay đổi và một tín hiệu reward (tín hiệu này cho biết hành động vừa rồi là tệ hay hành động vừa rồi là cực kì tốt). Như vậy, có thể dễ dàng thấy được mục tiêu của bài toán RL đó chính là dựa trên các mà environment phản hồi, đề ra một &lt;strong&gt;policy&lt;/strong&gt; tốt nhất để tương tác với môi trường đó. Trong bài toán tìm đường đi ngắn nhất, RL sẽ tìm một agent để có thể tìm đường đi hiệu quả nhất bằng cách cho agent lái đi trên nhiều tuyến đường chứng kiến các yếu tố ngoại cảnh. Đây cũng chính là ý tưởng chính của bài toán RL. Thay vì phải thu thập dữ liệu từ trước như các loại hình học máy khác, RL thu thập dữ liệu trong quá trình thực thi và cải thiện mô hình dựa trên lượng dữ liệu đó.&lt;/p&gt;
+
+&lt;h2 id=&quot;3-phát-biểu-bài-toán-reinforcement-learning&quot;&gt;3. Phát biểu bài toán Reinforcement Learning&lt;/h2&gt;
+
+&lt;p&gt;Để có thể phát biểu chính xác bài toán Reinforcement Learning, trước hết chúng ta cần phải định nghĩa chính xác thế nào là environment và agent. Environment có thể hiểu đơn giản là một tập hợp các trạng thái (state) được thay đổi qua lại theo một qui tắc nhất định nào đó ứng với các hành động của agent. Một agent là một thực thể trong environment có khả năng tương tác với environment và thay đổi trạng thái của nó. Agent có thể biết hoặc không biết qui luật đằng sau sự biến đổi giữa các state. Một &lt;strong&gt;policy&lt;/strong&gt; có thể được hiểu là một hàm số theo biến $s$, tức là cứ gặp state $s$ của environment thì agent sẽ thực hiện hành động $a = \pi (s)$. Cũng nên chú ý rằng, hàm $\pi (s)$ này có thể là một hàm phân phối xác suất, không nhất thiết phải là một hàm số có mối quan hệ 1-1 (điều này cực kì hữu hiệu trong các bài toán mà agent không biết qui luật thay đổi state của environment).&lt;/p&gt;
+
+&lt;p&gt;Như vậy thì dường như các bạn đã thấy bài toán này có hao hao cái gì đó để tối ưu, giống như các thuật toán trước. Đó chính là policy $\pi$. Câu hỏi được đặt ra là cái gì sẽ là cái đánh giá độ tốt của một policy. Một ý tưởng cực kì tự nhiên là chỉ cần chọn $\pi$ sao cho tổng reward signal $r_t$ đạt giá trị lớn nhất. Đây là một ý tưởng có lí trên mặt thực tế nhưng về mặt lí thuyết, nó gặp phải một trở ngại: lúc này, tổng reward sẽ không chỉ tỉ lệ thuận theo độ tốt của policy mà còn tỉ lệ thuận với độ dài thời gian mà agent này đã hoạt động. Điều này có nghĩa là một policy khiến cho agent hoạt động vĩnh viễn mà không đến được state mong muốn (và luôn né những state cần tránh) lại trở nên tốt hơn so với policy giúp cho agent đến được state mong muốn chỉ với vài bước (điều này rất dễ diễn ra trong trường hợp có vô hạn state của môi trường). Chính vì vậy, thông thường, policy $\pi$ sẽ được tối ưu thông qua hàm số sau:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V^{\pi}(s) = \mathbb{E}[r_t + \gamma r_{t+1} + \gamma^2 r_{t+2}+\ldots | s_t = s]&lt;/script&gt;
+
+&lt;p&gt;với $\gamma$ được gọi là discount factor và hàm $V^{\pi}(s)$ có một tên gọi khác là value function. Dễ thấy, hàm value function đo lường độ tốt của một state dựa theo policy mà agent đang thực hiện. Bằng việc giới thiệu hằng số $\gamma$ như trên, người ta không những giải quyết được vấn đề vô hạn bước mà còn có thể điều khiển mức độ nhìn trước của agent. Nếu $\gamma$ gần với 1 thì những policy dài hạn sẽ cho value function lớn hơn những policy ngắn hạn, từ đó agent sẽ có xu hướng tạo ra những nước đi để lại kết quả dài lâu (điều này phù hợp cho các ứng dụng của RL trong các bài toán tài chính) và ngược lại, nếu $\gamma$ gần với 0 thì policy mà agent có xu hướng thực thi sẽ rất ngắn hạn, tức là chỉ tham lam lấy state liền kề tốt nhất mà không cần để ý đến những bước sau này. Tóm lại, bài toán RL có thể được phát biểu như sau:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Cho một biến $s$ là một biến ngẫu nhiên thể hiện state của một environment $E$ và $s$ có thể biến đổi theo một phân phối nhất định ($s$ có thể có hữu hạn hoặc vô hạn giá trị). Biết rằng một agent $T$ chỉ có thể tương tác với $s$ thông qua các hành động trong tập $\mathcal{A}$. Gọi tập hợp các state là $\mathcal{S}$ là tập hợp các state, mục tiêu của bài toán RL là tìm ra một policy $\pi$ là một hàm số đi từ tập $\mathcal{S}$ đến tập $\mathcal{A}$ sao cho hàm $V^{\pi}(s)$ đạt giá trị lớn nhất.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;4-giải-bài-toán-rl-trong-trường-hợp-biết-sẵn-được-mô-hình-tương-tác-giữa-các-state-với-nhau-policy-iteration-và-value-iteration&quot;&gt;4. Giải bài toán RL trong trường hợp biết sẵn được mô hình tương tác giữa các state với nhau: Policy iteration và Value iteration&lt;/h2&gt;
+
+&lt;p&gt;Trước hết chúng ta cần biết mô hình tương tác giữa state với nhau trong environment sẽ có dạng như thế nào. Thông thường các bài toán RL đều phụ thuộc rất nhiều vào các lí thuyết của chuỗi Markov. Một chuỗi Markov có thể hiểu là một chuỗi các state được sắp xếp theo trình tự thời gian sao cho khả năng state sau xuất hiện chỉ phụ thuộc vào việc state phía trước là state gì. Nói một cách toán học, một chuỗi state được gọi là chuỗi Markov nếu và chỉ nếu&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(s_{t+1} = j|s_t=i, s_{t-1}, \ldots ) = P(s_{t+1} = j|s_t=i)&lt;/script&gt;
+
+&lt;p&gt;Việc giả định environment là một chuỗi Markov thường hợp lí trong nhiều trường hợp. Trong bài toán xe tự lái, vị trí tiếp theo của chiếc xe chỉ phụ thuộc vào vị trí hiện tại của cái xe mà không phụ thuộc vào cả quãng đường cái xe đã đi. Trong bài toán chơi cờ chẳng hạn, nước cờ tiếp theo của agent phụ thuộc vào nước cờ của đối phương chứ không phụ thuộc toàn bộ vào cách chơi của đối phương. Tất nhiên, bạn có thể lí luận là có rất nhiều trường hợp mà environment không thể Markov và việc lấy toàn bộ các state phía trước đó. Tuy nhiên thì người ta chứng minh được rằng trong trường hợp thời gian vô hạn thì mọi chuỗi sẽ tiến về chuỗi markov và nếu lấy toàn bộ lịch sử các state thì sẽ gây ra tốn bộ nhớ và không hiệu quả vì trong bộ nhớ sẽ có thể có sự lặp lại của một chuỗi nhiều lần.&lt;/p&gt;
+
+&lt;p&gt;Khi sử dụng chuỗi Markov vào trong các bài toán RL, ngoài việc định nghĩa các state và mô hình xác suất tương tác giữa các state, chúng ta cần phải định nghĩa hai thứ nữa là hành động và reward signal. Do đó, nói một cách toán học thì một chuỗi markov cần phải có 4 thứ sau:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;$\mathcal{S}$ là tập hợp các state&lt;/li&gt;
+  &lt;li&gt;$\mathcal{A}$ là tập hợp các hành động có thể thực hiện&lt;/li&gt;
+  &lt;li&gt;$P(s_t = j|s_t = i, a_t=a)$ là xác suất chuyển từ state $t$ đến state $t+1$ biết hành động $a$ được thực hiện tại thời điểm $t$ áp lên state $t$&lt;/li&gt;
+  &lt;li&gt;$R(s, a) = \mathbb{E}[r_t | s_t=s, a_t = a]$ chính là kì vọng reward tại state $s_t$ biết hành động $a_t$ được thực hiện.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Trong trường hợp biết sẵn được mô hình tương tác giữa các state của môi trường với nhau, cách nhanh nhất và đơn giản nhất là vét cạn qua tất cả các state và action để tìm ra được policy tốt nhất. Song, như các bạn đã biết, mọi cách vét cạn đều có nhược điểm là độ phức tạp cực lớn do không gian tìm kiếm khủng. Nếu kí hiệu $|\mathcal{S}|$ là số state của môi trường và $|\mathcal{A}|$ là số hành động cụ thể. Như vậy độ phức tạp của thuật toán vét cạn phải tối thiểu $\mathcal{O}(|\mathcal{S}|^{|\mathcal{A}|})$. Đây là độ phức tạp mà siêu máy tính hiện tại vẫn chưa thể giải ra nếu số hành động khả thi lớn (số state có thể nhỏ trong hầu hết vấn đề). Vì vậy, hai thuật toán Policy Iteration và Value Iteration được ra đời để có thể tìm kiếm policy một cách hiệu quả hơn.&lt;/p&gt;
+
+&lt;h3 id=&quot;41-thuật-toán-policy-iteration&quot;&gt;4.1. Thuật toán Policy Iteration&lt;/h3&gt;
+
+&lt;p&gt;Để hiểu thuật toán Policy Iteration, trước hết chúng ta cần tổng quát hoá hàm value. Nếu các bạn học xác suất tốt thì có thể chứng minh được đẳng thức sau (mình sẽ chứng minh điều này trong phần Phụ lục):&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;V^{\pi}(s) = R(s, \pi (s)) + \gamma\sum_{s'\in\mathcal{S}}P(s_{t+1}=s'|s_t=s,a_t=\pi (s))V^{\pi}(s')&lt;/script&gt;
+
+&lt;p&gt;Đẳng thức này được gọi là đẳng thức Bellman và nó giúp cho việc tính toán hàm value function trở nên dễ dàng hơn thông qua việc sử dụng qui hoạch động. Nhìn vào đẳng thức trên, có thể thấy hàm $\pi (s)$ thực chất chính là hành động $a$ bất kì. Do đó, phương trình này có thể được tổng quát hoá thành một hàm số như sau:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;Q^\pi (s, a) = R(s, a) + \gamma\sum_{s'\in\mathcal{S}} P(s_{t+1}=s'|s_t=s,a_t=a)V^{\pi}(s')&lt;/script&gt;
+
+&lt;p&gt;Hàm số này còn có tên gọi khác là hàm state-action, đóng vai trò rất quan trọng trong việc tối ưu hoá các policy. Người ta chứng minh được rằng cho một policy $\pi$ bất kì và một policy $\pi’$ được tạo ra bằng cách: với mỗi state $s$, chọn $a$ sao cho $Q^\pi (s, a)$ đạt cực đại thì $V^{\pi’}(s)\geq V^\pi (s)$ (mình sẽ chứng minh trong phần phụ lục). Thuật toán Policy Iteration được xây dựng trên nguyên lí này bằng cách lâp đi lặp lại việc tạo ra $\pi’$ từ các policy cũ từ đó thu được một policy tối ưu. Mã giả của thuật toán được mô tả ở hình dưới đây:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./assets/pi_vi/policy_eval.png&quot; alt=&quot;policy evaluation&quot; /&gt;
+&lt;img src=&quot;./assets/pi_vi/policy_improvement.png&quot; alt=&quot;policy improvement&quot; /&gt;
+&lt;img src=&quot;./assets/pi_vi/policy_iteration.png&quot; alt=&quot;policy iteration&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Nếu tính độ phức tạp của thuật toán này thì chúng ta giả sử ở thuật toán Policy Evaluation ta giới hạn lại số vòng lặp bằng 1 con số $N$ rất lớn và giả sử thuật toán Policy Iteration chạy với $k$ lần thì độ phức tạp của thuật toán sẽ là $\mathcal{O}(k\times N\times |\mathcal{S}|^2))$ nhỏ hơn so với việc vét cạn hết toàn bộ trường hợp rất nhiều. Tất nhiên cần phải lưu ý, tuy chặn trên của $k$ là $|\mathcal{S}|^{|\mathcal{A}|}$ nhưng trên thực tế, thuật toán Policy Iteration khám phá trong một không gian con nhỏ hơn rất nhiều so với việc vét cạn hết toàn bộ trường hợp. Tuy nhiên, một nhược điểm lớn nhất của thuật toán là tốc độ hội tụ tuy nhanh nhưng độ phức tạp của mỗi vòng lặp lại rất lớn (do thuật toán Policy Evaluation đòi hỏi một lượng lớn vòng lặp).&lt;/p&gt;
+
+&lt;h3 id=&quot;42-thuật-toán-value-iteration&quot;&gt;4.2. Thuật toán Value Iteration&lt;/h3&gt;
+
+&lt;p&gt;Thuật toán Value Iteration xuất phát từ một ý tưởng cực kì đơn giản nhưng lại rất hữu hiệu. Quan sát thuật toán Policy Iteration, ta có thể thấy thuật toán duy trì cả hai hàm policy và value cùng một lúc, khiến cho việc tính toán trở nên cồng kềnh và mất thời gian. Thuật toán Value Iteration bắt đầu bằng việc cố gắng tối ưu hàm value function trước rồi policy ứng với hàm value tối ưu đó đương nhiên cũng sẽ là policy tối ưu. Nếu quan sát kĩ hơn nữa trong thuật toán Policy Iteration thì có thể thấy thuật toán Policy Iteration xây dựng một chuỗi các policy $(V^{\pi_i})_{i\geq 0}$ tăng dần và hội tụ về $V^\pi$ tối ưu. Nhưng như bạn thấy, thực chất cũng chả cần phải có $\pi_i$ để có thể tối ưu hoá $V^\pi$ mà chỉ cần chọn ra tạo ra giá trị ban đầu $V(s)=0$ với mỗi $s$ và chọn ra hành động $a$ để cho hàm $Q(s, a)$ đạt giá trị lớn nhất và cứ lặp lại liên tục thì chắc chắn cũng sẽ thu được $V$ cực đại. Như vậy, ta có thuật toán Value Iteration đơn giản như sau:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./assets/pi_vi/value_iteration.png&quot; alt=&quot;value iteration&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Ở trong thuật toán này, mỗi bước của thuật toán có độ phức tạp là $\mathcal{O}(|\mathcal{A}|\times |\mathcal{S}|^2)$, thấp hơn so với mỗi bước của thuật toán Policy Iteration ($\mathcal{O}(N\times|\mathcal{S}|^2)$ với $N\gg|\mathcal{A}|$). Tuy nhiên, tốc độ hội tụ của thuật toán lại chậm hơn so với thuật toán trên.&lt;/p&gt;
+
+&lt;h2 id=&quot;sử-dụng-thuật-toán-value-iteration-và-policy-iteration-vào-bài-toán-tìm-đường-đi-ngắn-nhất-trong-ma-trận-vuông&quot;&gt;Sử dụng thuật toán Value Iteration và Policy Iteration vào bài toán tìm đường đi ngắn nhất trong ma trận vuông&lt;/h2&gt;
+
+&lt;p&gt;Trước hết mình cần định nghĩa bài toán ma trận vuông mà mình cần giải.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Bài toán:&lt;/strong&gt; Cho một ma trận vuông $n\times n$ với vị trí bắt đầu là ô vuông (0, 0) và vị trí kết thúc là ô vuông (n-1, n-1). Trong bảng ma trận, có một số ô vuông là cạm bẫy. Khi đi vào các ô cạm bẫy, xác suất để thoát ra được ô vuông đó là p (lưu ý là trong bài toán này agent dính bẫy sẽ không chết mà sẽ bị dính ở ô vuông đó cho đến khi thoát ra được, giống với một ô bùn). Hãy tìm đường đi hiệu quả để đi từ ô vuông ban đầu đến ô vuông kết thúc.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Dưới đây là một ví dụ minh hoạ cho bài toán:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./assets/pi_vi/demo.png&quot; alt=&quot;minhoa&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Ở trên hình có 2 bảng vuông, bảng bên trái là bảng có chứa thông tin về các ô vuông bẫy (đỏ), ô bắt đầu (đen) và ô kết thúc (đen) và bảng bên phải sẽ là bảng thể hiện trạng thái của agent (đen). Mình sẽ kí hiệu $M(T, p)$ đại diện cho bài toán trên với bảng vuông $T$ với xác suất thoát bẫy là $p$. Vì mục đích bảo trì mã, mình xin phép mỗi bài test sẽ là một bảng vuông khác nhau để cho các bạn thấy thuật toán của mình hoạt động đúng. Hai thuật toán Policy Iteration và Value Iteration mình code không sử dụng quá nhiều thư viện cao siêu (chủ yếu là numpy) và link github phần code mình sẽ up vào cuối bài viết.&lt;/p&gt;
+
+&lt;p&gt;Trước khi bước vào giải bài toán, mình sẽ phát biểu mô hình Markov của bài toán này:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;$\mathcal{S}$ sẽ bao gồm $n\times n$ toạ độ của các ô vuông với ô vuông bắt đầu là (0, 0) và ô vuông kết thúc $(n-1, n-1)$&lt;/li&gt;
+  &lt;li&gt;$\mathcal{A}$ sẽ bao gồm 4 thao tác chính: lên, xuống, trái, phải.&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Định nghĩa phân phối $P(s_{t+1}|s_t, a_t)$:&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;$P(s_{t+1} = (i’, j’) | s_t = (i, j), a_t=a) = 0$ nếu thực hiện hành động $a$ lên $(i, j)$ không thể đến được $(i’, j’)$&lt;/li&gt;
+      &lt;li&gt;$P(s_{t+1} = (i’, j’) | s_t = (i, j), a_t=a) = p$ nếu $(i, j)$ là ô bẫy và $(i, j)$ đến được $(i’, j’)$ thông qua $a$ (tất nhiên điều đó có nghĩa là $P(s_{t+1}=(i, j) | s_t=(i, j), a_t=a) = 1-p$).&lt;/li&gt;
+      &lt;li&gt;$P(s_{t+1} = (i’, j’) | s_t = (i, j), a_t=a) = 1$ nếu $(i, j)$ không là ô bẫy và $(i, j)$ đến được $(i’, j’)$ thông qua hành động $a$.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Reward: Trong phần test này mình sẽ test 2 hàm reward để cho các bạn thấy hàm reward sẽ ảnh hưởng nhiều đến nghiệm của bài toán. Hai hàm reward đó là:
+    &lt;ul&gt;
+      &lt;li&gt;$R_{l_1}((i, j), a) = \dfrac{1}{1 + |i - n + 1| + |j - n + 1|}$&lt;/li&gt;
+      &lt;li&gt;$R_{l_2}((i, j), a) = \dfrac{1}{1 + \sqrt{(i - n + 1)^2 + (j - n + 1)^2}}$&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Discounted factor $\gamma$: Mình sẽ test luôn cả ảnh hưởng của $\gamma$ lên các thuật toán để cho các bạn thấy thế nào là các policy ngắn hạn và dài hạn.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;ảnh-hưởng-của-hàm-reward-lên-kết-quả-của-bài-toán&quot;&gt;Ảnh hưởng của hàm reward lên kết quả của bài toán&lt;/h3&gt;
+
+&lt;p&gt;Trong phần này, mình sẽ không sử dụng các ô vuông bẫy để cho các bạn có thể thấy hai kết quả nó sẽ khác nhau như thế nào. Như vậy, bảng vuông $T$ của mình sẽ có dạng như sau:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./assets/pi_vi/reward_init.png&quot; alt=&quot;init_env&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Nếu các bạn tinh ý và các bạn có kiến thức nền về toán, $R_{l_1}((i, j), a)$ thực chất là reward cho các ô vuông dựa trên độ xa gần của ô vuông đó đến ô vuông cuối theo khoảng cách $L_1$ và $R_{l_2}((i, j), a)$ thực chất là reward cho các ô vuông dựa trên độ xa gần của ô vuông đó đến ô vuông cuối theo khoảng cách $L_2$. Theo đó, nếu đúng theo lí thuyết, agent của chúng ta trong trường hợp $L_1$ sẽ đi men theo cạnh của bảng và trong trường hợp $L_2$ sẽ đi men theo đường chéo chính. Đây là kết quả của thuật toán Policy Iteration khi sử dụng hai reward khác nhau (với $\gamma = 0.9$).&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;L1 reward&lt;/em&gt;
+&lt;img src=&quot;./assets/pi_vi/l1_pi_case.png&quot; alt=&quot;l1_pi&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;L2 reward&lt;/em&gt;
+&lt;img src=&quot;./assets/pi_vi/l2_pi_case.png&quot; alt=&quot;l2_pi&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Thuật toán Value Iteration cũng cho ra kết quả tương tự (cũng với $\gamma$ như trên).&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;L1 reward&lt;/em&gt;
+&lt;img src=&quot;./assets/pi_vi/l1_vi_case.png&quot; alt=&quot;l1_pi&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;L2 reward&lt;/em&gt;
+&lt;img src=&quot;./assets/pi_vi/l2_vi_case.png&quot; alt=&quot;l2_pi&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Điều này chứng tỏ rằng việc chọn hàm reward là một việc quan trọng để có thể tìm thấy nghiệm phù hợp với bài toán. Như các bạn thấy, việc chọn 2 công thức tính khoảng cách khác nhau đã tạo ra 2 nghiệm hoàn toàn khác nhau cho bài toán. Trong trường hợp bẫy xuất hiện, một số trường hợp sử dụng $L_1$ sẽ đảm bảo agent tìm được nghiệm bài toán hiệu quả hơn. Ví dụ như trong trường hợp dưới đây:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./assets/pi_vi/l2_eff_case.png&quot; alt=&quot;l1_eff_case&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Rõ ràng lúc này chiến thuật chỉ đi theo đường chéo chứng tỏ ưu thế của mình khi bẫy bố trí ở gần mép bản đồ. Tất nhiên, điều đó cũng có nghĩa nếu bẫy tập trung ở gần tâm bản đồ thì việc sử dụng $L_1$ lại trở nên hữu hiệu.&lt;/p&gt;
+
+&lt;h3 id=&quot;ảnh-hưởng-của-discount-factor-lên-policy-tìm-ra&quot;&gt;Ảnh hưởng của discount factor lên policy tìm ra&lt;/h3&gt;
+
+&lt;p&gt;Dưới đây là bảng $T$ mà mình sử dụng, mình sẽ test trên $L_2$ reward, $L_1$ xin để giành cho bạn đọc.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./assets/pi_vi/gamma_test.png&quot; alt=&quot;gamma_test&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Và dưới đây là kết quả của việc sử dụng Policy Iteration trên bảng $T$ với $\gamma=0.1$ và $\gamma=0.9$.&lt;/p&gt;
+
+&lt;p&gt;$\gamma=0.1$&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./assets/pi_vi/low_gamma.png&quot; alt=&quot;low_gamma&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;$\gamma=0.9$&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./assets/pi_vi/high_gamma.png&quot; alt=&quot;high_gamma&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Như các bạn thấy, ở trường hợp trên, vì $\gamma$ nhỏ nên agent có xu hướng tối ưu hoá các bước đi ở những timestep gần nhất mà không để ý đến kết quả dài lâu, do đó agent vẫn đi theo lối cũ mặc dù sẽ dính rất nhiều cạm bẫy. Mặt khác, nếu bạn chọn $\gamma$ lớn như ở trường hợp dưới, agent sẽ suy nghĩ đến việc làm sao để các bước sau đi không gặp bẫy từ đó có thể đến được ô cuối.&lt;/p&gt;
+
+&lt;h3 id=&quot;value-iteration-và-policy-iteration-hội-tụ-nhanh-hay-thực-thi-nhanh&quot;&gt;Value Iteration và Policy Iteration: Hội tụ nhanh hay thực thi nhanh?&lt;/h3&gt;
+
+&lt;p&gt;Cuối cùng, mình muốn cho các bạn thấy về ưu khuyết điểm của thuật toán Policy Iteration và thuật toán Value Iteration. Mình cần nhắc là hai thuật toán này luôn đảm bảo độ hội tụ về nghiệm tối ưu, chứng minh sẽ ở phần Phụ lục. Mình test đơn giản trên con Mac OS X với processor 2.5 GHz Quad-Core Intel Core i7. Bảng $T$ lúc này sẽ là bảng không có bẫy như bài test đầu tiên nhưng với kích thước $10\times 10$. Lúc này, $\gamma=0.9$. Mình sẽ test cả 2 thuật toán trên cả $L_1$ và $L_2$ để cho thấy ưu nhược điểm của mỗi cái.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Test&lt;/th&gt;
+      &lt;th&gt;#iterations&lt;/th&gt;
+      &lt;th&gt;each iteration time&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;L1 + Policy Iteration&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;8.13s&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;L2 + Policy Iteration&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;8.51s&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;L1 + Value Iteration&lt;/td&gt;
+      &lt;td&gt;173&lt;/td&gt;
+      &lt;td&gt;0.13s&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;L2 + Value Iteration&lt;/td&gt;
+      &lt;td&gt;173&lt;/td&gt;
+      &lt;td&gt;0.13s&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Rõ ràng như các bạn đã thấy, thuật toán Value Iteration đòi hỏi nhiều vòng lặp (gấp 34.6 lần) thuật toán Policy Iteration để có thể hội tụ đến policy tối ưu nhưng bù lại, mỗi vòng lặp chỉ tiêu tốn khoảng 0.13s tức là nhỏ hơn gần 65 lần so với thuật toán Policy Iteration. Lí do như mình đã giải thích, thuật toán Policy Iteration tập trung vào việc tính toán hàm value rồi từ đó cải thiện policy, việc này đòi hỏi một lượng lặp rất lớn (trong trường hợp của mình là khoảng tầm 100 vòng lặp). Trong khi đó, thuật toán Value Iteration chỉ tập trung tối ưu hoá hàm value rồi trích xuất policy từ đó, do đó, lượng công thức tính toán ít nhưng đổi lại tốc độ hội tụ khá chậm. Thuật toán value iteration sẽ rất thích hợp trong các bài toán finite-horizon, tức là các bài toán đòi hỏi giới hạn về số bước thực hiện vì lúc này environment sẽ bị giới hạn, do đó sử dụng một lượng lớn vòng lặp chỉ để tính policy tối ưu không phải là một phương án hay. Và ngược lại, Policy Iteration lại phù hợp cho các bài toán không giới hạn về bước thực hiện mà chỉ quan tâm đến kết quả vì lúc này chi phí lấy mẫu từ environment đã trở nên rất đắt.&lt;/p&gt;
+
+&lt;h2 id=&quot;5-kết-luận&quot;&gt;5. Kết luận&lt;/h2&gt;
+
+&lt;p&gt;Vậy là mình đã hoàn thành việc giới thiệu sơ qua cho các bạn về bài toán Reinforcement Learning và cách giải bài toán này trong trường hợp biết mô hình tương tác giữa các state trong môi trường (hay còn gọi là mô hình chuỗi Markov). Đó chính là hai thuật toán Value Iteration và Policy Iteration. Cả hai thuật toán đều tốt hơn so với cách vét cạn nhưng lại chú trọng vào hai đối tượng khác nhau. Policy Iteration chú trọng vào tối ưu hoá một policy chưa tối ưu thông qua việc cực đại hoá hàm state action. Ngược lại, Value Iteration chú trọng vào việc cực đại hoá hàm state value và thông qua đó trích xuất policy tối ưu. Mình đã test cho các bạn thấy ưu nhược điểm của cả hai: Policy Iteration hội tụ nhanh những chi phí mỗi vòng lặp đắt trong khi Value Iteration lại hội tụ lâu với chi phí mỗi vòng lặp rẻ. Tuy nhiên, cả hai thuật toán này chỉ hữu dụng khi giải quyết các bài toán đã biết trước mô hình. Trong trường hợp chưa biết trước mô hình, chúng ta cần các kĩ thuật khác mà mình sẽ đề cập ở bài viết sau.&lt;/p&gt;
+
+&lt;h2 id=&quot;phụ-lục&quot;&gt;Phụ lục&lt;/h2&gt;
+
+&lt;p&gt;Như bài blog trước của mình, phần này sẽ dành cho những bạn thích Toán và muốn biết thêm tại sao hai thuật toán trên có thể hoạt động đúng và đảm bảo hội tụ. Trước hết, chúng ta cần chứng minh rằng tồn tại policy tối ưu để hàm $V^{\pi_i}(s)$ đạt giá trị lớn nhất với mọi $s$. Điều này có thể dễ dàng suy ra được vì chỉ có hữu hạn hành động và state nên sẽ tồn tại một tập các hành động ứng với state để hàm value lớn nhất.&lt;/p&gt;
+
+&lt;p&gt;Tiếp theo, như mình nói ở phần 4.1, thuật toán Policy Iteration hoạt động dựa trên nguyên tắc liên tục cải thiện policy chưa tối ưu. Do đó mình cần phải chứng minh bổ đề sau:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bổ đề 1:&lt;/strong&gt; $(V^{\pi_i}(s))$ là một dãy tăng với mọi $s\in\mathcal{S}$.&lt;/p&gt;
+
+&lt;p&gt;Chứng minh: Mình kí hiệu $G_t=r_t+\gamma r_{t+1}+ \gamma^2r_{t+2} + \ldots$. Như vậy, dễ thấy $V^{\pi_i}(s) = \mathbb{E}[G_t|s_t=s, a_t=\pi_i(s)] = Q^{\pi_i}(s, \pi(s))$. Theo thuật toán Policy Iteration thì&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+    V^{\pi_i}(s) &amp;= Q^{\pi_i}(s, \pi(s))\\
+    &amp;\leq\max_a Q^{\pi_i}(s, a)\\
+    &amp;=Q^{\pi_i}(s, \pi_{i+1}(s))\\
+    &amp;=\mathbb{E}[G_t|s_t=s, a_t=\pi_{i+1}(s)]\\
+    &amp;=\mathbb{E}[r_t + \gamma G_{t+1}|s_t=s, a_t=\pi_{i+1}(s)]\\
+    &amp;=\mathbb{E}[r_t + \gamma V^{\pi_i}(s_{t+1})|s_t=s, a_t=\pi_{i+1}(s)]\\
+    &amp;\leq\mathbb{E}[r_t + \gamma\max_a Q^{\pi_i}(s_{t+1}, a)|s_t=s, a_t=\pi_{i+1}(s)]\\
+    &amp;=\mathbb{E}[r_t + \gamma r_{t+1} + \gamma^2 V^{\pi_i}(s_{t+2}) | s_t=s, a=\pi_{i+1}(s)]\\
+    &amp;\ldots\\
+    &amp;\leq\mathbb{E}[r_t + \gamma r_{t+1} + \ldots | s_t=s, a_t=\pi_{i+1}(s)]\\
+    &amp;=V^{\pi_{i+1}}(s)
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Từ đó, ta có điều phải chứng minh (lưu ý, biến đổi từ dòng 3 sang 4 và 6 sang 7 là hệ quả của kì vọng lặp).&lt;/p&gt;
+
+&lt;p&gt;Chính vì $(V^{\pi_i}(s))_{i\geq 0}$ là một dãy tăng và bị chặn trên nên nó hội tụ về chặn trên đúng của dãy đó là policy tối ưu (hệ quả của định lí Bolzano-Weierstrass). Từ đó, ta chứng minh được thuật toán Policy Iteration hội tụ.&lt;/p&gt;
+
+&lt;p&gt;Để chứng minh thuật toán Value Iteration luôn hội tụ thì ta cần một số bổ đề sau:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bổ đề 2:&lt;/strong&gt; Chứng minh rằng với mọi hàm số $f$ và $g$ ta có&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;|max f - max g|\leq max|f - g|&lt;/script&gt;
+
+&lt;p&gt;&lt;em&gt;Chứng minh&lt;/em&gt;: Gọi $x^*=\arg\max_x f$ và không mất tính tổng quát, giả sử $max f\geq\max g$. Từ đó, ta có $VT = f(x^*) - \max g\leq f(x^*) - g(x^*)\leq\max |f - g|.$&lt;/p&gt;
+
+&lt;p&gt;Như vậy, theo thuật toán Value Iteration, ta sẽ có được:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+    \lVert V_{i+1}(s) - V_i(s)\rVert_\infty &amp;= \max_{s\in\mathcal{S}} |V_{i+1}(s) - V_i(s)|\\
+    &amp;= \max_{s\in\mathcal{S}} |\max_{a\in\mathcal{A}} R(s, a) + \gamma \sum_{s'\in\mathcal{S}} P(s'|s, a)V_i(s') - \max_{a\in\mathcal{A}} R(s, a) + \gamma \sum_{s'\in\mathcal{S}} P(s'|s, a)V_{i-1}(s')|\\
+    &amp;\leq\max_{s\in\mathcal{S}}\max_{a\in\mathcal{A}}\gamma\left|\sum_{s'\in\mathcal{S}}P(s'|s, a)(V_i(s') - V_{i-1}(s'))\right|\\
+    &amp;\leq\max_{s\in\mathcal{S}}\max_{a\in\mathcal{A}}\gamma\left|\sum_{s'\in\mathcal{S}}P(s'|s, a)\lVert V_i(s') - V_{i-1}(s')\rVert_\infty\right|\\
+    &amp;=\max_{s\in\mathcal{S}}\max_{a\in\mathcal{A}}\gamma\lVert V_i(s') - V_{i-1}(s')\rVert_\infty\left|\sum_{s'\in\mathcal{S}}P(s'|s, a)\right|\\
+    &amp;=\gamma\lVert V_i(s') - V_{i-1}(s')\rVert_\infty\\
+    &amp;\leq\gamma^2\lVert V_{i-1}(s') - V_{i-2}(s')\rVert_\infty\\
+    &amp;\ldots\\
+    &amp;\leq\gamma^i\lVert V_1(s') - V_0(s')\rVert_\infty
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Cho $i\to\infty$ thì ta có được $\lim_{i\to\infty}\lVert V_{i+1}(s) - V_i(s)\rVert_\infty = 0$. Từ đó suy ra được thuật toán này hội tụ về hàm value tối ưu và từ đó có thể trích xuất ra policy tối ưu.&lt;/p&gt;</content><author><name>Pham Hoang Minh</name></author><category term="maths" /><category term="optimization" /><category term="reinforcement-learning" /><category term="policy-iteration" /><category term="value-iteration" /><summary type="html">1. Giới thiệu</summary></entry><entry><title type="html">Toán học đằng sau thuật toán hồi qui tuyến tính (Linear Regression).</title><link href="http://localhost:4000/linear-regression" rel="alternate" type="text/html" title="Toán học đằng sau thuật toán hồi qui tuyến tính (Linear Regression)." /><published>2021-06-26T00:00:00+07:00</published><updated>2021-06-26T00:00:00+07:00</updated><id>http://localhost:4000/linear-regression</id><content type="html" xml:base="http://localhost:4000/linear-regression">&lt;h2 id=&quot;giới-thiệu&quot;&gt;Giới thiệu&lt;/h2&gt;
 
 &lt;p&gt;Trong thời gian học Đại học của mình, chương trình học có một môn học tên là Regression Analysis. Tên rất kêu nhưng giáo viên dạy môn học này của mình rất qua loa và không chú ý đến chi tiết của các định lí. Vậy nên, lần này, mình sẽ viết góc nhìn xác suất của các thuật toán hồi qui tuyến tính nhằm chỉ ra rằng việc sử dụng các thuật toán tối ưu hoá là chưa đủ để có thể tạo ra các mô hình học máy hoàn chỉnh. Bài viết này mình chia thành 3 phần: Phần 1 là động cơ để mình viết bài blog này, phần 2 mình sẽ giới thiệu sơ về thuật toán hồi qui tuyến tính, phần 3 sẽ là về góc nhìn xác suất của thuật toán và làm sao để sử dụng thuật toán này với hiệu quả cao nhất và phần cuối cùng sẽ là kết luận bao gồm một số nhược điểm của thuật toán này.&lt;/p&gt;
 
@@ -670,91 +927,4 @@ Nếu chọn 1.02 thì x_n sẽ lạng lách và đi càng ngày càng xa điể
     &lt;script src=&quot;assets/create_map.js&quot;&gt;&lt;/script&gt;
     &lt;script src=&quot;assets/create_bar_chart.js&quot;&gt;&lt;/script&gt;
     &lt;script src=&quot;assets/create_line_chart.js&quot;&gt;&lt;/script&gt;
-&lt;/body&gt;</content><author><name>Pham Hoang Minh</name></author><category term="data-visualization" /><summary type="html">Vietnam's air condition How polluted is Vietnam's air in the world? Vietnam stands at position 21st among the most 100 air-polluted countries in 2020. 2018 2019 2020 How polluted is Vietnam's air in ASEAN? Vietnam stands at position 3rd among ASEAN countries in terms of AQI in 2020. 2018 2019 2020 AQI of some cities in Vietnam Most cities in Vietnam belongs to moderate and unhealthy groups. Why is it the case? Is it due to the reduction of forest area? No! The forest area is still increasing. Why is it the case? However, the amount of carbon dioxide (CO2) is still increasing. Why is it the case? The only reason is from the human activity. Below is the chart for the amount of CO2 emission from three sources: oil (red), gas (blue), coal (green). Vietnam releases at least 10 million tons of CO2 each year. Not surprisingly, coal emits the most amount of CO2 for it is used to produce electricity and gasoline. What are possible solutions? The only solution is to less depend on fossil fuel products. For individuals, this can be: Using public transports. Utilize solar and other renewable energy. Using environmental-friendly fuels (such as bilogical fuels). What are possible solutions? For government, this can be: Research and discover more efficient energy sources. Improve transport systems and infrastructures. Implement environmental taxes. This project is a small project conducted by a group of students from the International University, so it is not funded by any organizations. Full source for this project is published here</summary></entry><entry><title type="html">Embrace the likelihood</title><link href="http://localhost:4000/embrace-the-likelihood" rel="alternate" type="text/html" title="Embrace the likelihood" /><published>2020-06-14T00:00:00+07:00</published><updated>2020-06-14T00:00:00+07:00</updated><id>http://localhost:4000/embrace-the-likelihood</id><content type="html" xml:base="http://localhost:4000/embrace-the-likelihood">&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
-&lt;p&gt;The very first machine learning model that one would construct when starting his or her journey in the field of Machine Learning is Linear Regression, an algorithm to find the best linear model to fit a data set. In Machine Learning approach, Linear Regression has five main steps:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Initialize a weight vector&lt;/li&gt;
-  &lt;li&gt;Pass the feature matrix to the model&lt;/li&gt;
-  &lt;li&gt;Calculate the mean-squared-error (MSE) loss function:&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}\label{eq:1}
-	J(w) = \frac{1}{2m}\sum_{i=1}^m (h_w(x) - y)^2 
-\end{align}&lt;/script&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Calculate its gradient vector $\vec{\nabla} J$&lt;/li&gt;
-  &lt;li&gt;Update the weight by using gradient descent to minimize the loss function.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;However, the way to derive the loss function is usually ommitted. It turns out to be a very interesting topic that most of the statistical textbook have overlooked: the difference between likelihood and probability.&lt;/p&gt;
-
-&lt;h1 id=&quot;probability-vs-likelihood-frequentist-vs-bayesian&quot;&gt;Probability vs Likelihood: Frequentist vs Bayesian&lt;/h1&gt;
-&lt;p&gt;There is an interesting fact that there was a conflict between these two ideologies. Frequentist was popular in the 18th-19th century since mathematics of this time is purely based on theory. Bayesian approach started gaining popularity recently since a lot of applied mathematical model in the modern day requires the incorporation of uncertainty in it.&lt;/p&gt;
-
-&lt;p&gt;Frequentist approach is, in fact, the very first thing that a beginner in Probability and Statistics would tackle. At the high level, Frequentist approach emphasizes on the proportion of occurrence of events without taking any outside effect into account. For example, in Frequentist approach, the chance that a fair coin landing on head is 1/2 since there are two possible outcomes: head and tail, and landing on each one of them is equally likely to take place. At the low level, Frequentist apprach belives that the chance of occurrence of an event is defined as follow.&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(A) = \lim_{n\to\infty}\frac{n(A)}{n}&lt;/script&gt;
-
-&lt;p&gt;where $n(A)$ is the number of times the event $A$ happens in the total of $n$ trials.&lt;/p&gt;
-
-&lt;p&gt;Frequentist calls this chance probability. Frequentist approach has been a fundamental building block for various theory in Statistics, one of which is probability distribution such as the famous Gaussian (or so-called normal) distribution, and the Binomial distribution (which can be considered a discrete version of the former).&lt;/p&gt;
-
-&lt;p&gt;The weakness of Frequentist approach is that it does not take external information into account. A coin in Frequentist approach is always a fair coin, which never exists in the real world scenario. Bayesian approach is derived to tackle the issue. Taking the coin tossing problem as an example, in Frequentist approach, its probability of landing on head or tail is assigned to be 1/2. In Bayesian approach, however, the chance that the coin lands on head is $p$, and lands on tail is $1-p$, where $p$ is a random variable. Bayesian approach finds the optimal $q$ based on the data of a certain number of coin tossing. For instance, a coin is tossed 10 times, in which it lands on head 7 times. Frequentist approach would judge that the sample size is not sufficiently large, and would result in doing exhaustive experiments. Bayesian approach assumes that we can only draw that limited amount of sample, and perform inference on $p$.&lt;/p&gt;
-
-&lt;p&gt;Let $A$ be the event that a coin lands on head 7 times out of 10 tosses. Since $p$ is a random variable, it follows some kind of probability distribution in Frequentist approach. In Bayesian approach, we define a prior belief (or a prior probability distribution) on $p$, so we assume that $p$ follows a uniform distribution between 0 and 1. Then, by using the Bayes theorem,&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}\label{eq:2}
-	f(p|A) = \frac{f(A|p)\pi (p)}{\int_0^1 f(A|p)\pi (p)dp}
-\end{align}&lt;/script&gt;
-
-&lt;p&gt;where, in Bayesian terms, $f(p|A)$ is the posterior distribution of $p$ given $A$, $f(A|p)$ is the likelihood that the event $A$ will occur given the probability of landing on head is $p$, $\pi (p)$ is the prior distribution of $p$.&lt;/p&gt;
-
-&lt;p&gt;In Frequentist approach, given that the probability of landing on head is $p$, the chance of $A$ follows a binomial distribution with the proportion of success is $p$; thus, $f(A|p) = \binom{10}{7}p^7(1-p)^3$. Since we assume that $\pi (p)$ is a uniform distribution between 0 and 1, $\pi (p)=1,\text{ }\forall p\in [0,1]$. Since the denominator of (\ref{eq:2}) is always a constant for all p in $[0,1]$, we can rewrite (\ref{eq:2}) as&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}
-	f(p|A) = C\times f(A|p)\times\pi (p) = K\times p^7(1-p)^3
-\end{align}&lt;/script&gt;
-
-&lt;p&gt;where $C$ and $K$ are constants.&lt;/p&gt;
-
-&lt;p&gt;Our goal is to find $p$ such that the occurrence of the event is maximize. In other words, given the event $A$ happened, we want to find $p*$ such that $f(p|A)$ reaches its global maxima. Using Calculus approach, the optimal $p$ in this case is $0.7$.&lt;/p&gt;
-
-&lt;p&gt;In comparison to Frequentist approach, Bayesian approach introduces a new concept in conducting inferences: likelihood. Frequentists assume that the chance of an event happening is derived through repeated experiments and call it probability, whereas Bayesians believe that the chance of an event happening is also a random variable following a probability distribution, and finds the optimal chance of occurence through the data drawn from experiment with specifying their prior belief over the occurence chance. Sometimes, prior belief in Bayesian approach does have a major effect in conveying inference on the considered random variable. The methods performed above is called Maximum Likelihood Estimation, and it has been widely used in a lot of statistical textbooks without explaining its origin. It is the basics to derive the mean-squared-error loss function for linear regression.&lt;/p&gt;
-
-&lt;h1 id=&quot;from-maximum-likelihood-estimation-mle-to-linear-regression&quot;&gt;From Maximum Likelihood Estimation (MLE) to Linear Regression&lt;/h1&gt;
-
-&lt;p&gt;We consider a general regression problem as follows: suppose that a vector of random variable $\vec{X}$ and a random variable $Y$ have the relationship of $Y=f(\vec{X})$ where $f$ is a continuous function. To find $f$, we draw a lot of samples of $\vec{X}$ and $Y$ from their distribution, and perform inference on the drawn samples, which is exactly the Bayesian apprach. We denote $\mathcal{D} = \{(\vec{x_i}, y_i) | i=1,2,\ldots,m\}$ as the set of all drawn samples, where $\vec{x_i}\in\mathbb{R}^n$ (n is so-called the number of features), $y_i\in\mathbb{R}^n$, and $y_i = f(x_i) + \epsilon_i$, and $\epsilon_i\sim p(\epsilon)$.&lt;/p&gt;
-
-&lt;p&gt;The common approach to this problem is, first, to assume that $f$ is a member of a family of function $\mathcal{F}$, and second, to find the optimal $f^*\in\mathcal{F}$ that best fits $\mathcal{D}$. In order to define the criteria to evaluate how well the function $f$ fits $\mathcal{D}$, the maximum likelihood estimation (MLE) method is used.&lt;/p&gt;
-
-&lt;p&gt;Our goal is to maximize the likelihood&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}\label{eq:3}
-P(Y|X) = \prod_{i=1}^m p(y_i|\vec{x_i}) = \prod_{i=1}^m p(\epsilon_i)
-\end{align}&lt;/script&gt;
-
-&lt;p&gt;since knowing the appearance of $\vec{x_i}$ will result in the prediction $\hat{y_i} = f(x_i)$, from which $\epsilon_i$ is calculated.&lt;/p&gt;
-
-&lt;p&gt;The mean-squared-error is derived from the assumption that $\epsilon\sim\mathcal{N} (0, \sigma^2)$. With that assumption, by taking natural logarithm both sides (\ref{eq:3}), it can be rewritten as&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}\label{eq:4}
-\ln P(Y|X) = C - \sum_{i=1}^m \frac{(y_i - f(\vec{x_i}))^2}{2\sigma^2}
-\end{align}&lt;/script&gt;
-
-&lt;p&gt;where $C$ is a constant.&lt;/p&gt;
-
-&lt;p&gt;By maximizing $(\ref{eq:4})$, the term $J = \displaystyle{\sum_{i=1}^m} (y_i - f(\vec{x_i}))^2$ is also minimized (since $\sigma^2$ is assumed to be a constant), which is the famous mean-squared-error in Linear Regression.&lt;/p&gt;
-
-&lt;p&gt;From here, one may ask whether another loss function is derived by using this approach, by making different assumption on the distribution of $\epsilon$. The answer is yes; in fact, there is a kind of loss function starting to gain popularity in Linear Regression called the mean-absolute error&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-J = \sum_{i=1}^m |y_i - f(\vec{x_i})|
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;by assuming that $\epsilon$ follows Laplace distribution with mean 0. The only constraint in our assumption here is that the mean of the distribution to be assumed must be 0 (if the mean is not zero, we can shift the distribution to the left or the right based on the positivity or negativity of the mean).&lt;/p&gt;
-
-&lt;p&gt;With this approach, the cross-entropy loss function of Logistic Regression can also be derived. The only difference is that Logistic Regression assume its model as $g(\vec{x_i}) = \frac{1}{1+\exp\{-f(\vec{x_i})\}}$, where $f$ is called the boundary decision. The derivation is left for the reader, and the derivation $g$ will be ommitted since it is out of the scope of this blog.&lt;/p&gt;
-
-&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h1&gt;
-&lt;p&gt;The title of this blog is to emphasize to the role of likelihood in the field of Machine Learning, a concept that has been overlooked in a lot of basic statistical material. This blog has clarified the difference between Frequentist and Bayesian approach, and has linked a lot of familiar concept in Statistics to Bayesian one. It also shows an application in one of the most popular, yet fundamental algorithm in the field of Machine Learning, in general, and of Deep Learning, in specific, which provides a building block for the derivation of loss function for new model development.&lt;/p&gt;</content><author><name>Pham Hoang Minh</name></author><category term="statistics" /><category term="likelihood" /><category term="bayesian" /><category term="frequentist" /><summary type="html">Introduction The very first machine learning model that one would construct when starting his or her journey in the field of Machine Learning is Linear Regression, an algorithm to find the best linear model to fit a data set. In Machine Learning approach, Linear Regression has five main steps: Initialize a weight vector Pass the feature matrix to the model Calculate the mean-squared-error (MSE) loss function:</summary></entry></feed>
+&lt;/body&gt;</content><author><name>Pham Hoang Minh</name></author><category term="data-visualization" /><summary type="html">Vietnam's air condition How polluted is Vietnam's air in the world? Vietnam stands at position 21st among the most 100 air-polluted countries in 2020. 2018 2019 2020 How polluted is Vietnam's air in ASEAN? Vietnam stands at position 3rd among ASEAN countries in terms of AQI in 2020. 2018 2019 2020 AQI of some cities in Vietnam Most cities in Vietnam belongs to moderate and unhealthy groups. Why is it the case? Is it due to the reduction of forest area? No! The forest area is still increasing. Why is it the case? However, the amount of carbon dioxide (CO2) is still increasing. Why is it the case? The only reason is from the human activity. Below is the chart for the amount of CO2 emission from three sources: oil (red), gas (blue), coal (green). Vietnam releases at least 10 million tons of CO2 each year. Not surprisingly, coal emits the most amount of CO2 for it is used to produce electricity and gasoline. What are possible solutions? The only solution is to less depend on fossil fuel products. For individuals, this can be: Using public transports. Utilize solar and other renewable energy. Using environmental-friendly fuels (such as bilogical fuels). What are possible solutions? For government, this can be: Research and discover more efficient energy sources. Improve transport systems and infrastructures. Implement environmental taxes. This project is a small project conducted by a group of students from the International University, so it is not funded by any organizations. Full source for this project is published here</summary></entry></feed>
