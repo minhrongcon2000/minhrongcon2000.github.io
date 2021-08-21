@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/style.css">
-<title>RL Series - Thuật toán  và value iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông.</title>
+<title>RL Series - Thuật toán Policy Iteration và Value Iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông.</title>
 <!-- Load jQuery -->
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <!-- Load KaTeX -->
@@ -32,9 +32,9 @@
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
 </script>
 <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>RL Series - Thuật toán và value iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông. | Wi-tech’s Blog</title>
+<title>RL Series - Thuật toán Policy Iteration và Value Iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông. | Wi-tech’s Blog</title>
 <meta name="generator" content="Jekyll v3.8.7" />
-<meta property="og:title" content="RL Series - Thuật toán và value iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông." />
+<meta property="og:title" content="RL Series - Thuật toán Policy Iteration và Value Iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông." />
 <meta name="author" content="Pham Hoang Minh" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="1. Giới thiệu" />
@@ -45,9 +45,9 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2021-08-14T00:00:00+07:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="RL Series - Thuật toán và value iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông." />
+<meta property="twitter:title" content="RL Series - Thuật toán Policy Iteration và Value Iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông." />
 <script type="application/ld+json">
-{"url":"http://localhost:4000/pi-vi","headline":"RL Series - Thuật toán và value iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông.","dateModified":"2021-08-14T00:00:00+07:00","datePublished":"2021-08-14T00:00:00+07:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/pi-vi"},"author":{"@type":"Person","name":"Pham Hoang Minh"},"description":"1. Giới thiệu","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"url":"http://localhost:4000/pi-vi","headline":"RL Series - Thuật toán Policy Iteration và Value Iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông.","dateModified":"2021-08-14T00:00:00+07:00","datePublished":"2021-08-14T00:00:00+07:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/pi-vi"},"author":{"@type":"Person","name":"Pham Hoang Minh"},"description":"1. Giới thiệu","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 </head>
 
@@ -86,7 +86,7 @@
     <section class="content">
       <div class="post-container">
   <a class="post-link" href="/pi-vi">
-    <h2 class="post-title">RL Series - Thuật toán  và value iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông.</h2>
+    <h2 class="post-title">RL Series - Thuật toán Policy Iteration và Value Iteration trong giải quyết bài toán tìm đường đi trong ma trận vuông.</h2>
   </a>
   <div class="post-meta">
     <div class="post-date"><i class="icon-calendar"></i>Aug 14, 2021</div><ul class="post-categories"><li>maths</li><li>optimization</li><li>reinforcement-learning</li><li>policy-iteration</li><li>value-iteration</li></ul></div>
@@ -183,7 +183,7 @@
 
 <p><img src="./assets/pi_vi/demo.png" alt="minhoa" /></p>
 
-<p>Ở trên hình có 2 bảng vuông, bảng bên trái là bảng có chứa thông tin về các ô vuông bẫy (đỏ), ô bắt đầu (đen) và ô kết thúc (đen) và bảng bên phải sẽ là bảng thể hiện trạng thái của agent (đen). Mình sẽ kí hiệu $M(T, p)$ đại diện cho bài toán trên với bảng vuông $T$ với xác suất thoát bẫy là $p$. Vì mục đích bảo trì mã, mình xin phép mỗi bài test sẽ là một bảng vuông khác nhau để cho các bạn thấy thuật toán của mình hoạt động đúng. Hai thuật toán Policy Iteration và Value Iteration mình code không sử dụng quá nhiều thư viện cao siêu (chủ yếu là numpy) và link github phần code mình sẽ up vào cuối bài viết.</p>
+<p>Ở trên hình có 2 bảng vuông, bảng bên trái là bảng có chứa thông tin về các ô vuông bẫy (đỏ), ô bắt đầu (đen) và ô kết thúc (đen) và bảng bên phải sẽ là bảng thể hiện trạng thái của agent (đen). Mình sẽ kí hiệu $M(T, p)$ đại diện cho bài toán trên với bảng vuông $T$ với xác suất thoát bẫy là $p$. Vì mục đích bảo trì mã, mình xin phép mỗi bài test sẽ là một bảng vuông khác nhau để cho các bạn thấy thuật toán của mình hoạt động đúng. Hai thuật toán Policy Iteration và Value Iteration mình code không sử dụng quá nhiều thư viện cao siêu (chủ yếu là numpy) và link github phần code mình ở <a href="https://github.com/minhrongcon2000/policy_iteration_and_value_iteration">đây</a>.</p>
 
 <p>Trước khi bước vào giải bài toán, mình sẽ phát biểu mô hình Markov của bài toán này:</p>
 
